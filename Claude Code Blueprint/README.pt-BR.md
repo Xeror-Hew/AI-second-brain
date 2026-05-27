@@ -98,7 +98,7 @@ Prefere na mão? Nesta ordem:
 
 ## 🌎 2. Idioma
 
-A blueprint vem em **inglês**. No setup, o `/setup` pergunta qual idioma você quer e **localiza a instalação**: traduz o que você lê e edita (os docs de `project_brain/`, o `CLAUDE.md`, os gatilhos das skills) e deixa a estrutura em inglês (nomes de pasta, caminhos, código). Então sua mãe roda tudo em português, um alemão em alemão, tudo a partir de uma fonte só.
+A blueprint vem em **inglês**. No setup, o `/setup` pergunta qual idioma você quer e **localiza a instalação**: traduz a prosa que você lê e edita (os docs de `project_brain/`, o `CLAUDE.md`, os gatilhos das skills) e também os nomes de pasta, arquivo e comando, reescrevendo cada referência pra links e hooks continuarem funcionando. Um punhado de nomes que o Claude Code e o motor exigem fica em inglês (`.claude/`, os scripts de hook, o `settings.json`, a pasta `memory/`). Então sua mãe roda tudo em português, um alemão em alemão, tudo a partir de uma fonte só.
 
 ---
 
