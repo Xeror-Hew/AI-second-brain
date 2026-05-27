@@ -1,116 +1,77 @@
-# Spec · Claude Cowork Blueprint (Desktop + MCP)
+# Spec · Claude Cowork Blueprint
 
-Data: 2026-05-27
+Data: 2026-05-27 (revisado na mesma data após corrigir a premissa)
 
 ## Problema e contexto
 
-A mãe da Ana usa o **Claude Desktop** pra trabalho de escritório (PDFs, planilhas, imagens) e sofre com projetos bagunçados e perda de contexto ("o Claude tá ficando burro"). É exatamente a dor que esta blueprint resolve. A variante **Cowork** (planejada, nunca criada) vira o veículo: um "segundo cérebro" adaptado do Code blueprint, dirigido pelo Claude Desktop via MCP filesystem.
+A mãe da Ana faz trabalho de escritório (PDFs, planilhas, imagens) e sofre com projetos bagunçados e perda de contexto ("o Claude tá ficando burro"). É a dor que esta blueprint resolve. A variante **Cowork** vira o veículo: o "segundo cérebro" do Code blueprint adaptado pro trabalho de conhecimento.
 
-Resultado pretendido: a Ana instala uma vez por projeto; depois roda sozinho. A mãe só conversa como sempre, e por trás o cérebro se regenera a cada sessão, mantendo o contexto vivo entre conversas.
+Resultado: instalação tão turnkey quanto o Code, uso diário mais leve, e o cérebro se regenerando sozinho a cada sessão.
 
-## Fatos do Desktop (verificados, mai/2026)
+## Premissa corrigida
 
-- **MCP filesystem auto-sobe** com o Desktop; instalável como Desktop Extension (`.mcpb`, duplo-clique) ou via `claude_desktop_config.json`. Aceita múltiplos diretórios permitidos.
-- **Skills autorais** rodam no Desktop (Customize > Skills, upload de ZIP); também lê "project skills" de pasta.
-- **Não há hooks** no Desktop. O snapshot automático do Code não existe aqui.
-- Caveat: em conta Team, `remoteToolsDeviceName` no config pode sobrescrever silenciosamente o MCP local.
+Uma primeira rodada desenhou o Cowork como app de chat passivo, exigindo MCP filesystem, edição de `claude_desktop_config.json` e upload de ZIP de skill. Isso tornou a variante "simples" mais difícil que o Code. **Premissa errada.** Claude Cowork é **agêntico** (acessa pastas locais, roda shell numa VM, faz o próprio setup) e compartilha mecânica com o Claude Code: lê `CLAUDE.md` por projeto e auto-carrega skills de `.claude/skills/`. Logo o Cowork blueprint é o **Code blueprint com vocabulário de escritório**, não outro sistema.
 
-## Abordagem escolhida (B)
+## Três superfícies, uma pasta
 
-Espelhar o Code o máximo possível, trocando o substrato de CLI por **MCP filesystem + Project do Desktop + Skills autorais**. Setup uma vez por projeto, feito pela Ana; uso contínuo pela mãe sem fricção técnica.
+A mesma pasta roda em três superfícies agênticas, escolhidas por sessão:
+- **Claude Code CLI** (terminal): motor base. Lê `CLAUDE.md`, `.claude/skills/`, hooks.
+- **Claudian** (plugin de Obsidian que embute o Claude Code CLI): mesmo motor, hooks funcionam. Requer Obsidian 1.7.2+, o CLI no PATH e o plugin.
+- **Claude Cowork** (modo agêntico do Desktop): embutido, sem instalar. Lê `CLAUDE.md` + skills, sem hooks.
 
-## Arquitetura
+As três rodam shell/código, então geram office de verdade (openpyxl→xlsx, python-pptx→pptx, PIL/matplotlib→imagem) e fazem o setup agenticamente.
 
-Quatro peças por projeto:
+## Snapshot surface-aware por env
 
-1. **Pasta-cérebro** (o `project_brain/` do Code) num diretório local. Markdown puro; Obsidian opcional (só pra Ana inspecionar).
-2. **MCP filesystem** apontando pra pasta-cérebro. Sobe junto com o Desktop. Dá ao Claude olhos e mãos no cérebro: ler e escrever os docs.
-3. **Project do Desktop** com as instruções coladas. É o papel do `CLAUDE.md`: regras, navegação e procedimentos dos rituais. Aplica em todo chat; é o piso que funciona mesmo sem skill.
-4. **Skills autorais** subidas no Desktop: os comandos do Code adaptados. Camada de reforço por cima das instruções.
+Versionamento funciona em todas com convenção de `history/` compartilhada:
+- **CLI / Claudian** (`CLAUDECODE=1`, `CLAUDE_CODE_ENTRYPOINT=cli`): o hook `.claude/hooks/snapshot.*` dispara sozinho.
+- **Cowork** (`CLAUDE_CODE_IS_COWORK` setado): a skill `snapshot` lê o env e, quando no Cowork, congela o "antes" antes de editar um doc vivo.
 
-## O loop de regeneração (o coração)
+A skill decide agir lendo a superfície (proxy de "tem hook ou não"), não tentando observar o hook. Mesmo path `history/<nome>/<nome> YYYY-MM-DDTHH-mm-ss.md`, mesmo cooldown (~20 min) e exclusões (`history/`, `memory/`, `roadmap/`, `notes/`), então a mesma pasta entre superfícies nunca duplica. Ponto residual: no Cowork a execução depende do modelo seguir o procedimento (sem garantia dura de hook).
 
-Todo chat novo, o Claude, guiado pelas instruções do Project, lê via MCP `next_step` + `roadmap` + `plan` + `memory`, faz o trabalho, e ao fechar atualiza esses docs. Como o cérebro vive fora da janela de conversa, abrir um chat zerado reidrata o contexto. É isso que mata o "Claude ficou burro".
+## Diferenças vs Code (só isto muda)
 
-## Modelo multi-projeto e install repetível
+1. **Vocabulário código → escritório:** `code_map/` → `work_map/` (mapa dos entregáveis por tema); "code change" → "mudança em entregável"; `roadmap_log` por arquivo + data, sem hash; `check-map` → `check-work-map`.
+2. **Snapshot surface-aware:** mantém o hook; adiciona a skill `snapshot` + procedimento no `CLAUDE.md` que detecta `CLAUDE_CODE_IS_COWORK`.
+3. **Setup surface-agnostic:** detecta a superfície via env; instala tudo numa pasta só sem travar; junction de memória só no CLI/Claudian, no Cowork a memória vive como arquivos em `project_brain/memory/`.
+4. **Textos:** `CLAUDE.md` e READMEs ganham a seção de superfícies e a nota de snapshot surface-aware. Seção de Obsidian MCP mantida: o vault é a mesma pasta do brain, então o MCP segue útil (sobretudo pro CLI no terminal).
 
-A mãe tem vários focos, um Project por foco, e cria novos como no Code (cria/tem o projeto, instala a blueprint, volta a usar). Cada foco = um Desktop Project + uma pasta-cérebro própria. As **instruções de cada Project carregam o caminho** da sua pasta-cérebro, que é como o Claude desambigua qual cérebro é o daquele Project.
+Tudo o mais é igual ao Code: `.claude/skills/` auto-carregadas, `.claude/hooks/` (valem no CLI/Claudian), `project_brain/` como vault Obsidian, setup agêntico por projeto, instalação "dropar + rodar prompt".
 
-Isolamento no MCP (dois caminhos documentados no setup, **decisão na execução** com a Ana):
-- **Raiz-mãe única:** o MCP aponta pra uma pasta-mãe (ex.: `Claude/`); cada foco é subpasta. Criar projeto novo = nova subpasta + novo Project, sem editar JSON. Custo: o Claude tecnicamente enxerga as pastas irmãs; as instruções o escopam pro foco certo.
-- **Um MCP por projeto:** cada foco tem entrada/`.mcpb` próprio, isolado de verdade. Custo: editar config (ou gerar `.mcpb`) a cada projeto novo.
+## Instalação (por projeto, como o Code)
 
-## Setup: fresh, adaptar existente e upgrade
-
-Espelha o `setup` do Code (§2 fresh / §3 upgrade / dobrar conteúdo existente), reescrito pro Desktop:
-
-- **Fresh:** criar a pasta-cérebro, registrar/garantir o MCP, criar o Project e colar as instruções com o caminho preenchido, subir as skills, semear visão + estado iniciais, localizar PT-BR.
-- **Adaptar projeto existente:** se o Project já tem conhecimento, instruções ou arquivos, **preservar e dobrar** o útil na estrutura do cérebro (visão, plano, roadmap, memória), com julgamento e confirmação, sem apagar conteúdo da usuária. Mirror do passo "existing notes" do Code.
-- **Upgrade:** versão mais nova da blueprint sobre uma instalação existente — atualiza skills + instruções, preserva o `project_brain/` e a memória, re-localiza se a instalação estava em PT-BR.
-
-## Mapeamento Code → Cowork
-
-### Substrato
-- **Hooks → some** (`.claude/hooks/` sai: snapshot, remind-map, run-hook).
-- **`settings.json` → some.** Substituído por entrada de MCP filesystem + skills subidas.
-- **`setup.ps1/.sh` → guia de setup do Desktop** (`setup/desktop-setup.md`), cobrindo fresh/adaptar/upgrade, multi-projeto, localização e o caveat `remoteToolsDeviceName`.
-- **`CLAUDE.md` → `project_instructions.md`** (texto pra colar no Project; arquivo é a fonte canônica).
-
-### Snapshot/histórico (decisão: skill, opção i)
-- **`snapshot.ps1` → skill `snapshot`.** Antes de editar um doc vivo, o Claude copia o "antes" pra `history/<nome>/<nome> YYYY-MM-DDTHH-mm-ss.md`. Mesma lógica de cooldown (~20 min) e exclusões (`history/`, `memory/`, `roadmap/`, `notes/`), agora dirigida pelo Claude via MCP. Custo aceito: depende do Claude seguir o procedimento.
-
-### Vocabulário (código → escritório)
-- **`code_map/` → `work_map/`**: mapa dos entregáveis dela (onde estão PDFs/planilhas, por tema), não módulos. `map_index.md` lista artefatos/temas.
-- **`roadmap_log`**: sem hash de commit; referencia arquivo + data.
-- Regras que falam "code change" → "mudança em entregável/documento"; `check-map` → `check-work-map`.
-
-### Skills (vocabulário + repackage como skill de Desktop)
-Cada skill vira pasta `SKILL.md` zipável:
-- Mantêm papel, ajustam vocabulário: `start`, `done`, `end`, `remember`, `map`, `writeplan`, `debloat`, `fix-links`, `check-plan`, `check-map`→`check-work-map`, `setup`.
-- **Nova:** `snapshot` (substitui o hook).
-- `remind-map` (era hook) → dobrado em `done`/`map`.
-
-### Memória
-- Sem junção de harness no Desktop. Memória = arquivos em `project_brain/memory/` lidos via MCP a cada sessão (formato `_TEMPLATE_*.md` preservado). A fonte da verdade é a pasta.
+Cada projeto tem seu próprio brain. Abrir o projeto, dropar a blueprint na pasta dele, rodar o prompt de setup; o agente monta `project_brain`, preenche placeholders, escreve `CLAUDE.md`, semeia visão + estado, localiza PT-BR. Depois está setado. Novo foco = repetir.
 
 ## Estrutura de `Claude Cowork Blueprint/`
 
 ```
 Claude Cowork Blueprint/
-├── README.md / README.pt-BR.md      ← docs de install, sabor Desktop
-├── project_instructions.md          ← papel do CLAUDE.md (texto p/ colar no Project)
-├── setup/
-│   ├── desktop-setup.md             ← guia (MCP, Project, skills, seed, multi-projeto, PT-BR)
-│   └── filesystem-mcp.json          ← snippet do claude_desktop_config / ponteiro p/ .mcpb
-├── skills/
-│   ├── setup/ start/ done/ end/ remember/ map/ writeplan/ debloat/ snapshot/
-│   └── check-work-map/ check-plan/ fix-links/
+├── README.md / README.pt-BR.md
+├── CLAUDE.md
+├── .claude/
+│   ├── settings.json            ← hooks mantidos (valem no CLI/Claudian)
+│   ├── setup.ps1 / setup.sh
+│   ├── hooks/  snapshot.* remind-map.* run-hook.cmd
+│   └── skills/  setup start done end remember map writeplan debloat snapshot
+│                check-work-map check-plan fix-links
 └── project_brain/
     ├── Vision.md  context.md  next_step.md
-    ├── plan/ (index, summary, why, tech)
-    ├── roadmap/ (index, roadmap, log sem hash)
-    ├── work_map/ (map_index + fragmentos)
+    ├── plan/  roadmap/ (log sem hash)  work_map/
     ├── history/  memory/ (MEMORY.md + _TEMPLATE_*)  notes/
 ```
 
-## Reuso (não reescrever do zero)
-Quase tudo sai do `Claude Code Blueprint/` por cópia + edição cirúrgica:
-- `project_brain/` inteiro (só `code_map/`→`work_map/` e ajustes de texto).
-- Skills: copiar os `SKILL.md`, trocar vocabulário e tokens de comando; reescrever `setup` pro Desktop.
-- `CLAUDE.md` → base do `project_instructions.md`.
-- `snapshot.ps1` → fonte da lógica da skill `snapshot`.
-- README → reescrever seções de hook/CLI pra MCP/Project/Skills.
+## Verificação (mesma pasta, várias superfícies)
 
-## Verificação (end-to-end)
-1. **MCP:** instalar o filesystem Extension numa pasta-cérebro de teste; reabrir o Desktop; confirmar leitura/escrita em `project_brain/` via MCP.
-2. **Instruções:** criar um Project, colar `project_instructions.md` com o caminho; chat novo confirma orientação automática (lê `next_step`, propõe ação).
-3. **Multi-projeto:** criar um segundo foco; confirmar que cada Project só atua sobre a sua pasta-cérebro.
-4. **Skill snapshot:** pedir edição num doc vivo; confirmar o "antes" em `history/<nome>/` com timestamp e o cooldown segurando uma segunda edição em <20 min.
-5. **Loop:** rodar `done`; confirmar `roadmap`, `next_step` e `work_map` atualizados sem hash.
-6. **Adaptar existente:** rodar setup num Project que já tem conhecimento; confirmar que o conteúdo foi preservado e dobrado, nada apagado.
-7. **PT-BR:** rodar a localização; confirmar nomes/prosa em português, nenhum link/skill quebrado.
+1. **CLI/Claudian:** rodar setup; `project_brain` montado, `/start` lê o estado, editar um doc vivo dispara o hook (snapshot em `history/`).
+2. **Cowork:** abrir a pasta; a skill `snapshot` cobre o "antes" (sem hook).
+3. **Interop:** a skill lê `CLAUDE_CODE_IS_COWORK` certo em cada app; editar entre superfícies não duplica `history/` e respeita o cooldown.
+4. **Office:** pedir xlsx e pptx; geração via código nas três.
+5. **Loop:** `/done` atualiza `roadmap`, `next_step`, `work_map` sem hash.
+6. **Multi-projeto:** 2º foco com brain próprio, isolado.
+7. **Adaptar existente:** setup numa pasta com docs prévios preserva e dobra.
+8. **PT-BR:** localização sem link/skill quebrado.
 
-## Fora de escopo (YAGNI por ora)
-- Watcher de SO pro snapshot (opção ii) e versionamento via git/Obsidian (iii): só se a opção i doer.
-- Variante Cowork pra claude.ai web ou modo degradado multi-surface.
-- Criar a pasta `Claude Cowork Blueprint/` antes da aprovação deste spec.
+## Fora de escopo (YAGNI)
+
+- Watcher de SO / git pro snapshot.
+- Variante pro Claude "Chat" não-agêntico.
