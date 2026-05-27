@@ -1,0 +1,12 @@
+# Meta-workspace only (not part of the published blueprint).
+# Anchored with a leading slash so the blueprint's own .claude/ and CLAUDE.md still ship.
+/.claude/
+/CLAUDE.md
+/test/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Obsidian app config: each user gets their own when they open the vault
+.obsidian/
