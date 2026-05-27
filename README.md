@@ -1,12 +1,13 @@
-# Claudian
+# A second brain for the AI
 
-A drop-in second brain for Claude Code, built in Obsidian.
+A drop-in second brain for Claude, built in Obsidian.
+(probably can be used with other AI models, but will need some tweaking, I'm using only Claude for now so I built specially for it)
 
 Copy it into any project and Claude keeps the thinking organized for you: your vision, a technical plan, a roadmap, a live map of the code, and a memory that survives across sessions. A hook snapshots every living doc before it changes, so you never lose a previous version. You work in Obsidian, Claude reads and maintains the structure.
 
 ## Why this exists
 
-I built this while developing a big project that kept outgrowing my head. The changes in plan, forgetting to debug this, build that, and the worst of all, Claude was getting bloated with old information, decisions that I regret making, and the work started getting worse and worse. Then I started shaping a system to try to organize both my thoughts and get Claude's thoughts clean from trash, and it ended up working very well. So I refined it, stripped out the project-specific parts, and turned it into a blueprint anyone can drop into their own work.
+I built this while developing a big project that kept outgrowing my head. The changes in plan, forgetting to debug this, build that, and the worst of all, Claude was getting bloated with old information, outdated decisions and plans, the accumulated trash started destroying the development. Then I started shaping a system to try to organize both my thoughts and get Claude's thoughts clean from the trash, and it ended up working very well. So I refined it, stripped out the project-specific parts, and turned it into a blueprint anyone can drop into their own work.
 
 ## Variants
 
