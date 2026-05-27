@@ -8,9 +8,9 @@ You just got dropped into a project with this blueprint. Orchestrate the install
 
 ## 0. Where the blueprint files are
 
-`CLAUDE.md`, `.claude/`, and `project_brain/` may be:
+The only pieces you install are `CLAUDE.md`, `.claude/`, and `project_brain/`. They may be:
 - **Already at the root**: go straight ahead.
-- **Inside the folder the user dropped** (e.g. `Claude Code Blueprint/`): that's the source. Move its contents to the root, then delete the now-empty dropped folder. Tell the user to reopen the session so the skills load from the root.
+- **Inside the folder the user dropped** (e.g. `Claude Code Blueprint/`): that's the source. Move just those three to the root. The folder's own `README.md` and `README.pt-BR.md` are install docs, not part of the project: leave them in the dropped folder and delete the whole folder at the end. Never copy a `README` over one the user already has. Then tell the user to reopen the session so the skills load from the root.
 
 ## 1. Which case is this?
 
