@@ -220,7 +220,20 @@ The MCP gives the AI direct access to your open vault, so it sees and edits note
 2. Keep **Obsidian open** with this project's vault (the MCP serves over WebSocket, default port `22360`).
 3. In Claude Code, inside the project, run `/ide` and pick Obsidian.
 
-It needs Obsidian running. Closed app, the AI falls back to the filesystem (which works fine; the MCP is a bonus). One vault per blueprint.
+- **An MCP server that exposes the vault** (this section): a plugin runs an MCP server inside Obsidian, and Claude Code connects to it.
+- **An agent hosted inside Obsidian** (e.g. `yishentu/claudian`, `rait-09/obsidian-agent-client`): Claude runs as a sidebar inside the app. Different setup, skip it for this.
+
+To expose the vault over MCP:
+
+1. In Obsidian: **Settings → Community plugins**, install **Obsidian MCP** (`aaronsb/obsidian-mcp-plugin`, listed as "Semantic Notes Vault MCP"). Enable it.
+2. Open its settings tab, generate an **API key**, and note the port (default `3001`).
+3. Keep **Obsidian open on this project's vault**. The server runs from inside the app, so a closed Obsidian means the MCP is just gone (the AI falls back to the filesystem, which works fine).
+4. In Claude Code, from the project root, register it once:
+   ```
+   claude mcp add --transport http obsidian http://localhost:3001/mcp --header "Authorization: Bearer <your-api-key>"
+   ```
+
+It persists across sessions: register once, and from then on it connects whenever Obsidian is open on the vault. One vault per blueprint.
 
 ---
 

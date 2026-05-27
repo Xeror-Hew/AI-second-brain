@@ -25,7 +25,7 @@ The only pieces you install are `CLAUDE.md`, `.claude/`, and `project_brain/`. T
 4. Ask for the user's vision in `project_brain/Vision.md`, or help write it.
 5. If there's code, run `/map`. With the vision, run `/writeplan`, then derive the `roadmap`.
 6. Set `project_brain/next_step.md` to one item.
-7. Remind them about the superpowers plugin (one click when they trust the folder). See [[README]].
+7. Remind them about the superpowers plugin: `.claude/settings.json` already declares it, so when they trust the project folder Claude Code offers to install the marketplace plus plugin in one click. No prompt? `claude plugin install superpowers@claude-plugins-official`.
 8. **MCP**: see §5.
 9. **Existing notes or an old workflow?** If the project already has plans, notes, or its own workflow folder, leave it where it is. Offer to read it and fold the useful parts into the structure (Vision, plan, roadmap, memory), using judgment and confirming as you go. Adapt the content, do not force a rigid mapping, and never move or delete the user's own files without asking.
 
@@ -62,7 +62,17 @@ The rule: translate human text, keep identifiers, paths, and code as they are. T
 
 ## 5. MCP (final step, conversational)
 
-Setup ran and language is handled. Now walk the user through the Obsidian MCP in conversation. The MCP gives the AI direct access to the open vault, seeing and editing notes through the app on top of the filesystem. Ask which external tools or services they want Claude connected to, point them at the config, and reference the README's MCP section ([[README]] §9) for the install steps (community plugin, Obsidian open on this vault, `/ide` to connect). It's a bonus: closed app, the AI falls back to the filesystem.
+Setup ran and language is handled. Now walk the user through the Obsidian MCP in conversation. The MCP lets the AI read and edit the open vault through Obsidian on top of the filesystem. Ask which external tools or services they want Claude connected to and point them at the config.
+
+Two different things share the "Obsidian + Claude" name; keep them apart:
+- **(a) An MCP server that exposes the vault** (what we want): a plugin runs an MCP server inside Obsidian, and Claude Code connects to it.
+- **(b) An agent hosted inside Obsidian** (e.g. `yishentu/claudian`, `rait-09/obsidian-agent-client`): Claude as a sidebar in the app. A different setup, skipped here.
+
+For (a):
+1. Install the community plugin **Obsidian MCP** (`aaronsb/obsidian-mcp-plugin`, listed in the catalog as "Semantic Notes Vault MCP") and enable it.
+2. In its settings tab, generate an API key. Default port is `3001`.
+3. Keep Obsidian open on this project's vault. The server runs inside the app, so a closed Obsidian means the MCP is simply absent and the AI falls back to the filesystem, which works fine.
+4. Register once from the project root: `claude mcp add --transport http obsidian http://localhost:3001/mcp --header "Authorization: Bearer <key>"`. It persists across sessions. Do not use `/ide`.
 
 ## Always, at the end
 

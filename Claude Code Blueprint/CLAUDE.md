@@ -38,7 +38,7 @@
 
 2. **Living files carry no date in the name.** Stable names, edited in place. If a date matters it lives in the content (frontmatter or title), so links never break and the index never churns.
 
-3. **Versioning is automatic** (canonical rule, point here if you need it elsewhere). The hook `.claude/hooks/snapshot.*` freezes the "before" of each living file into `history/<file>/` ahead of an edit (one per file every ~20 min). Nobody moves anything by hand. Full detail: [[README]] plus the script comments.
+3. **Versioning is automatic** (canonical rule, point here if you need it elsewhere). The hook `.claude/hooks/snapshot.*` freezes the "before" of each living file into `history/<file>/` ahead of an edit (one per file every ~20 min). Nobody moves anything by hand. Full detail: the comments in `.claude/hooks/snapshot.*`.
 
 4. **The live truth is always in the current file.** `history/` holds the automatic snapshots, the user's safety net, out of the AI's workflow.
 
