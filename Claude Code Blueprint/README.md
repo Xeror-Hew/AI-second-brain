@@ -66,7 +66,7 @@ _BLUEPRINT_WORKFLOW/
 > ⚡ **Automatic:** drop the whole `Claude Code Blueprint/` folder into the project and paste:
 > > *"Read `Claude Code Blueprint/.claude/skills/setup/SKILL.md` and set this up in this project, reconciling with whatever is already here and preserving my content."*
 >
-> The AI detects the scenario (**clean** / **another workflow**), moves the files to the root, migrates while preserving your content, runs setup, asks what language you want, and deletes the blueprint folder at the end. Then reopen the session so the commands (`/start`, `/end`...) load.
+> The AI installs it fresh (or upgrades it in place if a version is already there), moves the files to the root, runs setup, asks what language you want, and deletes the blueprint folder at the end. Anything already in your project stays where it is. Then reopen the session so the commands (`/start`, `/end`...) load.
 
 Prefer it by hand? In order:
 
@@ -88,7 +88,7 @@ Prefer it by hand? In order:
 
 **8. Check the hook**: edit any living doc and watch a snapshot land in `project_brain/history/`.
 
-> ⚠️ **Already have a `CLAUDE.md` or an old workflow at the root?** Don't copy over it. Use the automatic way above: the dropped folder is the staging area, and `/setup` merges your `CLAUDE.md` (keeping placeholders and rules), migrates an old `desenvolvimento/` to `project_brain/`, runs setup, and cleans up. Full procedure: `.claude/skills/setup/SKILL.md`.
+> ⚠️ **Already have your own notes or an old workflow folder?** It stays where it is, setup never touches it. After the install, just ask Claude to read it and fold the useful parts into the structure (vision, plan, roadmap, memory). It adapts the content with your OK, no rigid mapping. Full procedure: `.claude/skills/setup/SKILL.md`.
 
 > ⚠️ **Existing project with a `.gitignore`:** setup appends the Claude block, it doesn't clobber. If your team versions a `CLAUDE.md`, decide whether to hide it (the default block ignores `CLAUDE.md`; edit the block in the setup script to keep it versioned).
 
@@ -144,7 +144,7 @@ A skill works two ways at once: you type `/name`, and the AI fires it on its own
 
 | Command | What it does |
 |---------|--------------|
-| `/setup` | Onboarding: install/migrate the blueprint into a project. Use it when you plug the folder in. |
+| `/setup` | Onboarding: install or upgrade the blueprint in a project. Use it when you plug the folder in. |
 | `/start` | Read-only orientation: where we stopped + the next step. |
 | `/done` | Finished a task: log it, prune the roadmap, set the next step. |
 | `/end` | End of session: update the map, log, roadmap, next_step, sweep dead links. |

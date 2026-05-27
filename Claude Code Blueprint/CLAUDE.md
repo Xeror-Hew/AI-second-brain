@@ -67,7 +67,7 @@
 > They live in `.claude/skills/`. You type `/name`; the AI also fires them on its own when the context matches (`when_to_use`). The skills carry the detailed procedure. The rules above are the short baseline, always in effect even if a skill doesn't fire.
 
 **Rituals (you trigger, or the AI when it recognizes the moment):**
-- `/setup`: onboarding. Installs/migrates the blueprint when you plug it into a project (clean, old version, or another workflow).
+- `/setup`: onboarding. Installs the blueprint fresh, or upgrades it in place when you drop a newer version.
 - `/start`: read-only orientation. Where we stopped plus the next step.
 - `/done`: finished a task. Log it, prune the roadmap, set the next step.
 - `/end`: end of session. Map, log, roadmap, next_step, link sweep.

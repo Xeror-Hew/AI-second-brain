@@ -66,7 +66,7 @@ _BLUEPRINT_WORKFLOW/
 > ⚡ **Automático:** jogue a pasta `Claude Code Blueprint/` inteira no projeto e cole:
 > > *"Read `Claude Code Blueprint/.claude/skills/setup/SKILL.md` and set this up in this project, reconciling with whatever is already here and preserving my content."*
 >
-> A IA detecta o cenário (**limpo** / **outro workflow**), move os arquivos pra raiz, migra preservando seu conteúdo, roda o setup, pergunta qual idioma você quer e apaga a pasta da blueprint no fim. Depois reabra a sessão pros comandos (`/start`, `/end`...) carregarem.
+> A IA instala do zero (ou atualiza no lugar, se já tiver uma versão lá), move os arquivos pra raiz, roda o setup, pergunta qual idioma você quer e apaga a pasta da blueprint no fim. O que já estava no seu projeto fica onde está. Depois reabra a sessão pros comandos (`/start`, `/end`...) carregarem.
 
 Prefere na mão? Nesta ordem:
 
@@ -88,7 +88,7 @@ Prefere na mão? Nesta ordem:
 
 **8. Confira o hook**: edite qualquer doc vivo e veja um snapshot aparecer em `project_brain/history/`.
 
-> ⚠️ **Já tem um `CLAUDE.md` ou um workflow antigo na raiz?** Não copie por cima. Use o jeito automático acima: a pasta jogada no projeto é a área de staging, e o `/setup` mescla seu `CLAUDE.md` (mantendo placeholders e regras), migra um `desenvolvimento/` antigo pra `project_brain/`, roda o setup e faz a limpeza. Procedimento completo: `.claude/skills/setup/SKILL.md`.
+> ⚠️ **Já tem suas próprias notas ou uma pasta de workflow antiga?** Ela fica onde está, o setup não encosta. Depois de instalar, é só pedir pro Claude ler e incorporar as partes úteis na estrutura (visão, plano, roadmap, memória). Ele adapta o conteúdo com seu OK, sem mapeamento rígido. Procedimento completo: `.claude/skills/setup/SKILL.md`.
 
 > ⚠️ **Projeto existente com um `.gitignore`:** o setup acrescenta o bloco do Claude, não sobrescreve. Se seu time versiona um `CLAUDE.md`, decida se vai escondê-lo (o bloco padrão ignora `CLAUDE.md`; edite o bloco no script de setup pra mantê-lo versionado).
 

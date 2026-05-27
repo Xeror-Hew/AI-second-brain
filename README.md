@@ -27,3 +27,7 @@ You will be setting up a few things, so you know what you are getting into:
 Open **`Claude Code Blueprint/`** and follow its specific README. It walks you through the install step by step. You can also ask your own Claude for help when installing.
 
 On install, `/setup` asks which language you want and translates the parts you read and edit into it, so you can run the whole thing in your own language. The whole thing is supposed to be customizable to fit your needs and your style, so feel free to play with it. (I dont know about using other AI models with this, but I think it is possible)
+
+## Updating
+
+Same move as installing. Grab the latest `Claude Code Blueprint/` folder, drop it in your project root, and run `/setup` again. It notices the blueprint is already there, checks the version, and upgrades in place: it swaps in the new engine (skills, hooks, setup) and merges any rule changes into your CLAUDE.md, while leaving your project_brain and your memory alone. Then it cleans up the folder it came in. Your notes and your history stay exactly where they were.
