@@ -48,7 +48,7 @@
 
 7. **Next step is always one item.** Done? **Overwrite** [[project_brain/next_step]] with the next one. No history here, just the active item.
 
-8. **End of each session**: update `code_map/` to match the code after the changes, and sweep dead/orphan links in the living docs. _(procedure: `/end`.)_ A **structural code change** (new module, refactor, moved file) updates the map on the spot, ahead of the session end _(`/map`)_.
+8. **Close out each task as you finish it, while the context is fresh.** The moment a task is done, run `/done`: log it, prune the roadmap, set the next step, and update `code_map/` if the code's shape changed. A **structural code change** updates the map on the spot _(`/map`)_, even mid-task. `/end` is the safety net at session close, sweeping the map and dead/orphan links for anything a task close missed. Waiting for session end loses the context that made the change clear.
 
 9. **Path-style wikilinks**, always `[[project_brain/path/file]]` (vault-relative, no extension). The visible text is the path: clickable for the human, one hop for the AI. **Exception: `memory/`** (see rule 13).
 
@@ -69,8 +69,8 @@
 **Rituals (you trigger, or the AI when it recognizes the moment):**
 - `/setup`: onboarding. Installs the blueprint fresh, or upgrades it in place when you drop a newer version.
 - `/start`: read-only orientation. Where we stopped plus the next step.
-- `/done`: finished a task. Log it, prune the roadmap, set the next step.
-- `/end`: end of session. Map, log, roadmap, next_step, link sweep.
+- `/done`: close out a finished task on the spot. Log it, prune the roadmap, update the map if the structure changed, set the next step.
+- `/end`: safety-net sweep at session close. Map, log, roadmap, next_step, dead links, catching whatever a task close missed.
 - `/remember`: save a memory in the right format plus index it.
 - `/map`: (re)build the code map.
 - `/writeplan`: derive or update `plan/` from [[project_brain/Vision]].

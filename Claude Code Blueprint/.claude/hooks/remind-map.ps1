@@ -1,6 +1,7 @@
 # remind-map.ps1: PostToolUse hook (Edit/Write)
-# After a CODE file gets edited, inject a reminder (does NOT block) to update the map
-# if the change was structural. Cooldown avoids nagging on every edit. Always exit 0.
+# After a CODE file gets edited, inject a reminder (does NOT block): close out the task
+# with /done if it's finished, and update the map if the change was structural.
+# Cooldown avoids nagging on every edit. Always exit 0.
 # The reminder reaches the AI via hookSpecificOutput.additionalContext.
 
 $ErrorActionPreference = 'Stop'
@@ -30,7 +31,7 @@ try {
     }
     Set-Content -LiteralPath $stamp -Value (Get-Date -Format 'o') -Force
 
-    $msg = "You edited code. IF it was a structural change (new module, refactor, moved/renamed file, changed flow), update project_brain/code_map/ now (skill /map) so it doesn't go stale. Small change: ignore."
+    $msg = "You edited code. If that finished a task, close it out now with /done (log, roadmap, next step, plus the map if the structure changed) while the context is fresh. If it was a structural change but the task isn't done, update project_brain/code_map/ now (/map). A small in-progress tweak: ignore."
     $out = @{
         hookSpecificOutput = @{
             hookEventName     = "PostToolUse"

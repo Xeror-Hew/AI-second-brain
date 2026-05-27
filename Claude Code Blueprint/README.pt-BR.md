@@ -146,8 +146,8 @@ Uma skill funciona de dois jeitos ao mesmo tempo: você digita `/nome`, e a IA d
 |---------|-----------|
 | `/setup` | Onboarding: instala/migra a blueprint num projeto. Use ao plugar a pasta. |
 | `/start` | Orientação read-only: onde paramos + o próximo passo. |
-| `/done` | Terminou uma tarefa: registra no log, poda o roadmap, define o próximo passo. |
-| `/end` | Fim de sessão: atualiza o mapa, log, roadmap, next_step, varre links mortos. |
+| `/done` | Fecha uma tarefa terminada na hora: registra no log, poda o roadmap, atualiza o mapa se a estrutura mudou, define o próximo passo. |
+| `/end` | Varredura de rede de segurança no fim da sessão: mapa, log, roadmap, next_step, links mortos, pegando o que um fechamento de tarefa deixou passar. |
 | `/remember` | Salva uma memória no formato certo + indexa. |
 | `/map` | (Re)constrói o mapa do código. |
 | `/writeplan` | Deriva ou atualiza `plan/` a partir do seu `Vision.md`. |
@@ -214,11 +214,9 @@ Assim você dá push e nada do workflow do Claude aparece no repo. Quer versiona
 
 ## 🔌 9. MCP do Obsidian (recomendado)
 
-O MCP dá à IA acesso direto ao seu vault aberto, então ela vê e edita notas pelo app, não só pelo filesystem.
+O MCP dá à IA acesso direto ao seu vault aberto, então ela lê e edita notas pelo app por cima do filesystem.
 
-1. No Obsidian: **Settings → Community plugins** e instale o plugin de integração com o Claude Code (repo de referência: `iansinnott/obsidian-claude-code-mcp`). Habilite. (O nome exato nos community plugins pode variar; confira o autor/descrição.)
-2. Mantenha o **Obsidian aberto** com o vault deste projeto (o MCP serve por WebSocket, porta padrão `22360`).
-3. No Claude Code, dentro do projeto, rode `/ide` e escolha o Obsidian.
+Duas coisas diferentes levam o nome "Obsidian + Claude". Separe as duas:
 
 - **Um servidor MCP que expõe o vault** (esta seção): um plugin roda um servidor MCP dentro do Obsidian, e o Claude Code se conecta a ele.
 - **Um agente hospedado dentro do Obsidian** (ex.: `yishentu/claudian`, `rait-09/obsidian-agent-client`): o Claude roda como sidebar dentro do app. Setup diferente, pule pra este caso.
@@ -241,10 +239,10 @@ Persiste entre sessões: registra uma vez e daí em diante conecta sempre que o 
 
 Ao começar uma sessão (ou `/start`), a IA segue a cola do `CLAUDE.md`: lê `CLAUDE.md`, depois `next_step.md`, e puxa `plan_tech`, `map_index`, `Vision` ou `MEMORY` conforme a necessidade.
 
-Ao longo do trabalho, a verdade fica alinhada, principalmente via skills:
-- Terminou uma tarefa → `/done`.
+A regra de bolso: atualize ao concluir, com o contexto quente. Fechar cada tarefa na hora mantém os docs verdadeiros enquanto a IA ainda segura o contexto; o `/end` é o backstop. Ao longo do trabalho, a verdade fica alinhada, principalmente via skills:
+- Terminou uma tarefa → `/done`, na hora (registra no log, poda o roadmap, atualiza o mapa se a estrutura mudou, define o próximo passo).
 - Prestes a mudar arquitetura → `check-plan` dispara; se o plano mudou, atualize o roadmap.
 - Criou/renomeou/removeu um doc → `fix-links` conserta os índices.
-- Fechando → `/end` roda o ritual inteiro.
+- Fechando → `/end`, a varredura de rede de segurança que pega o que um fechamento de tarefa deixou passar.
 
 Você só escreve em `Vision.md` e `notes/` quando der vontade. A IA mantém o resto.

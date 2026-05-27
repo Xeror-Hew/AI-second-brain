@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # remind-map.sh: PostToolUse (Edit/Write), Unix port of remind-map.ps1.
-# After a CODE file gets edited, inject a reminder (additionalContext) to update the map. Never blocks.
+# After a CODE file gets edited, nudge (additionalContext): close out the task with /done if finished,
+# and update the map if the change was structural. Never blocks.
 COOLDOWN_MIN=30
 
 payload="$(cat)"
@@ -23,6 +24,6 @@ if [ -f "$stamp" ]; then
 fi
 date +%s > "$stamp" 2>/dev/null || true
 
-msg="You edited code. IF it was a structural change (new module, refactor, moved/renamed file, changed flow), update project_brain/code_map/ now (skill /map) so it doesn't go stale. Small change: ignore."
+msg="You edited code. If that finished a task, close it out now with /done (log, roadmap, next step, plus the map if the structure changed) while the context is fresh. If it was a structural change but the task isn't done, update project_brain/code_map/ now (/map). A small in-progress tweak: ignore."
 printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"%s"}}\n' "$msg"
 exit 0

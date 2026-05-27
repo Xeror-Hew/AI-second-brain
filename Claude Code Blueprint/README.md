@@ -146,8 +146,8 @@ A skill works two ways at once: you type `/name`, and the AI fires it on its own
 |---------|--------------|
 | `/setup` | Onboarding: install or upgrade the blueprint in a project. Use it when you plug the folder in. |
 | `/start` | Read-only orientation: where we stopped + the next step. |
-| `/done` | Finished a task: log it, prune the roadmap, set the next step. |
-| `/end` | End of session: update the map, log, roadmap, next_step, sweep dead links. |
+| `/done` | Close out a finished task on the spot: log, prune the roadmap, update the map if the structure changed, set the next step. |
+| `/end` | Safety-net sweep at session close: map, log, roadmap, next_step, dead links, catching what a task close missed. |
 | `/remember` | Save a memory in the right format + index it. |
 | `/map` | (Re)build the code map. |
 | `/writeplan` | Derive or update `plan/` from your `Vision.md`. |
@@ -214,11 +214,9 @@ So you push and none of the Claude workflow shows up in the repo. Want to versio
 
 ## 🔌 9. Obsidian MCP (recommended)
 
-The MCP gives the AI direct access to your open vault, so it sees and edits notes through the app, not just the filesystem.
+The MCP gives the AI direct access to your open vault, so it reads and edits notes through the app on top of the filesystem.
 
-1. In Obsidian: **Settings → Community plugins** and install the Claude Code integration plugin (reference repo: `iansinnott/obsidian-claude-code-mcp`). Enable it. (The exact name in community plugins may vary; check the author/description.)
-2. Keep **Obsidian open** with this project's vault (the MCP serves over WebSocket, default port `22360`).
-3. In Claude Code, inside the project, run `/ide` and pick Obsidian.
+Two different things get called "Obsidian + Claude". Keep them apart:
 
 - **An MCP server that exposes the vault** (this section): a plugin runs an MCP server inside Obsidian, and Claude Code connects to it.
 - **An agent hosted inside Obsidian** (e.g. `yishentu/claudian`, `rait-09/obsidian-agent-client`): Claude runs as a sidebar inside the app. Different setup, skip it for this.
@@ -241,10 +239,10 @@ It persists across sessions: register once, and from then on it connects wheneve
 
 Starting a session (or `/start`), the AI follows the cheat sheet in `CLAUDE.md`: reads `CLAUDE.md`, then `next_step.md`, and pulls `plan_tech`, `map_index`, `Vision`, or `MEMORY` as needed.
 
-Through the work, the truth stays aligned, mostly via skills:
-- Finished a task → `/done`.
+The rule of thumb: update on completion, while the context is fresh. Closing each task on the spot keeps the docs true while the AI still holds the context; `/end` is the backstop. Through the work, the truth stays aligned, mostly via skills:
+- Finished a task → `/done`, right then (it logs, prunes the roadmap, updates the map if the structure changed, sets the next step).
 - About to change architecture → `check-plan` fires; if the plan changed, update the roadmap.
 - Created/renamed/removed a doc → `fix-links` fixes the indexes.
-- Wrapping up → `/end` runs the whole ritual.
+- Wrapping up → `/end`, the safety-net sweep that catches whatever a task close missed.
 
 You only write in `Vision.md` and `notes/` when you feel like it. The AI keeps the rest.

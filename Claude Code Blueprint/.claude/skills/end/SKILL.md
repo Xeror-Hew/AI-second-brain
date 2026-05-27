@@ -1,10 +1,10 @@
 ---
 name: end
-description: End-of-session ritual: update the map, log, roadmap, next step, and sweep dead links.
+description: Safety-net sweep at session close: catch up the map, log, roadmap, next step, and dead links that per-task closes missed.
 when_to_use: user says "end", "wrap up", "we're stopping", "that's it for today", or closes out the day's work
 ---
 
-Run the end-of-session ritual, in order:
+Per-task `/done` closes should already have done most of this. This is the safety net at session close: catch whatever slipped, in order:
 
 1. **Map**: update `project_brain/code_map/` to reflect the session's code changes (index plus affected fragments).
 2. **Log**: record finished items and changes in `project_brain/roadmap/roadmap_log.md` (one line each plus hash). Append only.
