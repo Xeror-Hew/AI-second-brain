@@ -58,7 +58,7 @@
 
 12. **What the AI needs to read has to be real text.** It sees transclusion (`![[file]]`) and `dataview` blocks as raw syntax. Any index or table the AI uses is static text.
 
-13. **`memory/` belongs to the harness (auto-memory), it doesn't follow rule 9.** Linked by a *junction* (see [[README]] setup). Inside it: `MEMORY.md` uses `[Title](file.md)`, and cross-links use the `[[slug]]` basename.
+13. **`memory/` belongs to the harness (auto-memory), it follows its own format, not rule 9.** Linked by a *junction* (setup wires it). Inside it: `MEMORY.md` uses `[Title](file.md)`, and cross-links use the full file basename `[[type_slug]]` (e.g. `[[feedback_estilo]]`). Obsidian resolves a wikilink against the filename, so the label must match the file exactly, `type_` prefix included.
 
 ---
 

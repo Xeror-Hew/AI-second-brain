@@ -191,9 +191,9 @@ One memory is one file plus one line in `MEMORY.md` (the index). Save with `/rem
 
 ### 🔗 Memory inside the vault
 
-By default Claude Code keeps memory outside the repo. setup links it into `project_brain/memory/` with a junction (Windows) or symlink (Mac/Linux), no admin needed. Same files, one place: edit a memory in Obsidian and it's the real one. (`memory/` stays out of the snapshot, so a deletion there has no `history/` backup.)
+By default Claude Code keeps memory outside the repo. setup links it into `project_brain/memory/` with a junction (Windows) or symlink (Mac/Linux), no admin needed. Same files, one place: edit a memory in Obsidian and it's the real one. Your live auto-memory physically moves into the repo at `project_brain/memory/` (the junction relocates the harness's memory there); since `project_brain/` is gitignored it stays local-only and out of the snapshot. (`memory/` stays out of the snapshot, so a deletion there has no `history/` backup.)
 
-Inside `memory/` the format is the harness's: `MEMORY.md` uses `[Title](file.md)`, cross-links use the `[[slug]]` basename. If the repo moves or gets cloned, run setup again to repoint the link.
+Inside `memory/` the format is the harness's: `MEMORY.md` uses `[Title](file.md)`, cross-links use the full file basename `[[type_slug]]` (e.g. `[[feedback_estilo]]`), which is what Obsidian resolves. If the repo moves or gets cloned, run setup again to repoint the link.
 
 ---
 

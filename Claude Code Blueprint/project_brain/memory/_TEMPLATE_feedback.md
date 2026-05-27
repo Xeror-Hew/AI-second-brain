@@ -11,4 +11,4 @@ Why: {{the reason the user gave, usually a past incident or strong preference. K
 How to apply: {{when and where the rule kicks in.}}
 
 <!-- Save from corrections and from confirmations ("that was right, keep doing it").
-     Cross-link related memories with [[other-memory-slug]] (the bare basename, auto-memory convention). -->
+     Cross-link related memories with the full file basename [[type_slug]] (e.g. [[feedback_estilo]]), which is what Obsidian resolves. -->

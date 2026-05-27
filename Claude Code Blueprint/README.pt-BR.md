@@ -191,9 +191,9 @@ Uma memória é um arquivo mais uma linha no `MEMORY.md` (o índice). Salve com 
 
 ### 🔗 Memória dentro do vault
 
-Por padrão o Claude Code mantém a memória fora do repo. O setup a conecta em `project_brain/memory/` com uma junction (Windows) ou symlink (Mac/Linux), sem precisar de admin. Mesmos arquivos, um lugar só: edite uma memória no Obsidian e é a real. (`memory/` fica fora do snapshot, então uma exclusão ali não tem backup em `history/`.)
+Por padrão o Claude Code mantém a memória fora do repo. O setup a conecta em `project_brain/memory/` com uma junction (Windows) ou symlink (Mac/Linux), sem precisar de admin. Mesmos arquivos, um lugar só: edite uma memória no Obsidian e é a real. Sua auto-memória viva passa a morar fisicamente dentro do repo, em `project_brain/memory/` (a junction reaponta a memória do harness pra lá); como `project_brain/` está no gitignore, ela fica só local e fora do snapshot. (`memory/` fica fora do snapshot, então uma exclusão ali não tem backup em `history/`.)
 
-Dentro de `memory/` o formato é o do harness: `MEMORY.md` usa `[Title](file.md)`, cross-links usam o basename `[[slug]]`. Se o repo se mover ou for clonado, rode o setup de novo pra reapontar o link.
+Dentro de `memory/` o formato é o do harness: `MEMORY.md` usa `[Title](file.md)`, cross-links usam o basename completo do arquivo `[[type_slug]]` (ex.: `[[feedback_estilo]]`), que é o que o Obsidian resolve. Se o repo se mover ou for clonado, rode o setup de novo pra reapontar o link.
 
 ---
 
