@@ -53,7 +53,7 @@ _BLUEPRINT_WORKFLOW/
     ├── code_map/
     │   └── map_index.md            ← code map index (method lives in /map)
     ├── history/                    ← automatic snapshots (the AI never reads it)
-    ├── ideas/                      ← your ideas (the AI reads only when you ask)
+    ├── notes/                      ← your notes/scratch space (the AI reads only when you ask)
     └── memory/                     ← auto-memory (linked into Claude Code, see §7)
         ├── MEMORY.md               ← memory index
         └── _TEMPLATE_*.md          ← user / feedback / project / reference
@@ -131,7 +131,7 @@ A blueprint vem em **inglês**. No setup, o `/setup` pergunta qual idioma você 
 | `next_step.md` | IA | Um item ativo. Concluído, é sobrescrito pelo próximo. |
 | `code_map/map_index.md` | IA | Estado do código: visão de topo + pointers pros fragmentos. |
 | `memory/` | IA (auto) | Memória persistente entre sessões (§7). |
-| `ideas/` | Você | Seu espaço de rascunho. A IA lê só quando você pede. |
+| `notes/` | Você | Seu espaço de notas/rascunho. A IA lê só quando você pede. |
 | `history/` | Hook (auto) | Versões congeladas. A IA nunca lê. |
 
 ---
@@ -175,7 +175,7 @@ A IA nunca lê `history/`. É sua rede de segurança pra recuperar uma versão a
 
 - Um snapshot por arquivo a cada ~20 min (ajuste no script).
 - Cada arquivo ganha uma subpasta, então `history/plan_tech/` é a linha do tempo completa dele.
-- Cobre `.md` em `project_brain/`. As pastas `roadmap/` e `memory/` ficam de fora.
+- Cobre `.md` em `project_brain/`. As pastas `roadmap/`, `memory/` e `notes/` ficam de fora.
 
 > O hook roda via `run-hook.cmd`, que escolhe o `.ps1` no Windows e o `.sh` no Mac/Linux. Nada pra instalar em nenhum dos dois.
 
@@ -247,4 +247,4 @@ Ao longo do trabalho, a verdade fica alinhada, principalmente via skills:
 - Criou/renomeou/removeu um doc → `fix-links` conserta os índices.
 - Fechando → `/end` roda o ritual inteiro.
 
-Você só escreve em `Vision.md` e `ideas/` quando der vontade. A IA mantém o resto.
+Você só escreve em `Vision.md` e `notes/` quando der vontade. A IA mantém o resto.

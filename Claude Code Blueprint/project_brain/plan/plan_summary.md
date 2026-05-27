@@ -1,6 +1,6 @@
 # 🤖 Plan (summary)
 
-> Short overview of the AI's technical plan, with pointers to the developed plans and the user's ideas.
+> Short overview of the AI's technical plan, with pointers to the developed plans and the user's notes.
 > Detail: [[project_brain/plan/plan_why]] (what/why), [[project_brain/plan/plan_tech]] (how).
 > Hub: [[project_brain/plan/plan_index]].
 
@@ -23,4 +23,4 @@
 ## Links
 
 - User's vision: [[project_brain/Vision]]
-- User's ideas: [[project_brain/ideas/ideas_index]]
+- User's notes: [[project_brain/notes/notes_index]]

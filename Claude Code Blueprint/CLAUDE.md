@@ -18,7 +18,7 @@
 
 5. **Catch bugs in passing.** Spot a latent problem on the way? Report it and propose a fix, even out of scope.
 
-6. **Always optimize.** Shortest path, more parallel, less code. No abstraction beyond what the task needs.
+6. **Always optimize.** Shortest path, more parallel, less code. Keep abstraction to what the task needs.
 
 7. **Check before you assert.** Read the code or doc that already exists before saying how a system works or changing it. When unsure, go to the source.
 
@@ -34,7 +34,7 @@
    - `code_map/`: current state of the code (index plus fragments). See [[project_brain/code_map/map_index]].
    - `history/`: old versions, automatic snapshots. The AI never reads it.
    - `memory/`: persistent auto-memory across sessions (harness-managed, see rule 13).
-   - `ideas/`: the user's idea space (the AI reads it only when asked, out of the snapshot).
+   - `notes/`: the user's note/idea space (the AI reads it only when asked, out of the snapshot).
 
 2. **Living files carry no date in the name.** Stable names, edited in place. If a date matters it lives in the content (frontmatter or title), so links never break and the index never churns.
 
@@ -52,7 +52,7 @@
 
 9. **Path-style wikilinks**, always `[[project_brain/path/file]]` (vault-relative, no extension). The visible text is the path: clickable for the human, one hop for the AI. **Exception: `memory/`** (see rule 13).
 
-10. **Link upkeep is the AI's job.** When you create/rename/remove a doc: update the right index (path-style wikilink plus a one-line description) and fix the links that pointed at the file. The user shouldn't fix links by hand. _(procedure: `/fix-links`.)_
+10. **Link upkeep is the AI's job.** When you create/rename/remove a doc: update the right index (path-style wikilink plus a one-line description) and fix the links that pointed at the file. Keep the user out of manual link upkeep. _(procedure: `/fix-links`.)_
 
 11. **Hub and spoke, not a dense web.** The index (hub) points to the files (spokes); each file points back to its index. Files don't cross-link densely. The AI navigates through the hub, not through chains of links.
 

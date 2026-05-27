@@ -12,5 +12,5 @@ Turn the user's vision into a technical plan:
    - `plan_tech.md`: architecture by phase, technical decisions, metrics.
    - `plan_summary.md`: short overview plus pointers (the reading entry).
    - `plan_index.md`: update the list if you add extra front/phase plans.
-3. **Stress the design**: call out tradeoffs and risks honestly before committing. Don't rubber-stamp the vision.
+3. **Stress the design**: push on the vision: surface tradeoffs and risks honestly before committing.
 4. If the plan changed, update `project_brain/roadmap/roadmap.md` in the same pass.

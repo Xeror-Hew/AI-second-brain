@@ -14,7 +14,7 @@ case "$fp" in *.md) ;; *) exit 0 ;; esac            # .md only
 
 norm="${fp//\\//}"                                  # normalize separator
 case "$norm" in */project_brain/*) ;; *) exit 0 ;; esac
-case "$norm" in */history/*|*/memory/*|*/roadmap/*|*/ideas/*) exit 0 ;; esac
+case "$norm" in */history/*|*/memory/*|*/roadmap/*|*/notes/*) exit 0 ;; esac
 
 devRoot="${norm%%/project_brain/*}/project_brain"
 base="$(basename "$fp")"; base="${base%.md}"

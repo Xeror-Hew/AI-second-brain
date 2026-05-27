@@ -10,4 +10,4 @@ When you create, rename, or remove a doc in `project_brain/`:
 2. **Back-links**: if you renamed or removed, fix every link that pointed at the file. Grep to find them.
 3. **`memory/` exception**: there the format is the harness's. `MEMORY.md` uses `[Title](file.md)`, and cross-links use the full file basename `[[type_slug]]` (e.g. `[[feedback_estilo]]`). Obsidian resolves the wikilink against the filename, so the label has to match the file exactly, `type_` prefix included.
 
-The user shouldn't have to fix links by hand. `/end` does the full sweep at session close; this is the on-the-spot fix.
+Keep the user out of manual link upkeep. `/end` does the full sweep at session close; this is the on-the-spot fix.

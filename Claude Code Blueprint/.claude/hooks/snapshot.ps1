@@ -18,7 +18,7 @@ try {
     # Nothing to snapshot unless the file already exists (Write creating a new file = nothing to save)
     if (-not (Test-Path -LiteralPath $filePath)) { exit 0 }
 
-    # Living .md docs under project_brain/ (any depth), excluding history/, memory/, roadmap/, ideas/
+    # Living .md docs under project_brain/ (any depth), excluding history/, memory/, roadmap/, notes/
     # (roadmap/ keeps its own history in roadmap_log; no snapshot needed)
     if ([IO.Path]::GetExtension($filePath) -ne '.md') { exit 0 }
     $norm  = ($filePath -replace '/', '\')
@@ -26,7 +26,7 @@ try {
     $marker = '\project_brain\'
     $idx = $lower.IndexOf($marker)
     if ($idx -lt 0) { exit 0 }
-    if (($lower -like '*\history\*') -or ($lower -like '*\memory\*') -or ($lower -like '*\roadmap\*') -or ($lower -like '*\ideas\*')) { exit 0 }
+    if (($lower -like '*\history\*') -or ($lower -like '*\memory\*') -or ($lower -like '*\roadmap\*') -or ($lower -like '*\notes\*')) { exit 0 }
 
     $devRoot = $norm.Substring(0, $idx + $marker.Length - 1)   # ...\project_brain
     $base    = [IO.Path]::GetFileNameWithoutExtension($filePath)

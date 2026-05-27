@@ -1,6 +1,6 @@
-# 💡 {{USER}}'s ideas
+# 💡 {{USER}}'s notes
 
-> Your space, organized however you like. The AI reads it only when you ask.
+> Your space for notes, drafts, and ideas, organized however you like. The AI reads it only when you ask.
 
 ---
 

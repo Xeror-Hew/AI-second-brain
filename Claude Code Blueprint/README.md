@@ -53,7 +53,7 @@ _BLUEPRINT_WORKFLOW/
     ├── code_map/
     │   └── map_index.md            ← code map index (method lives in /map)
     ├── history/                    ← automatic snapshots (the AI never reads it)
-    ├── ideas/                      ← your ideas (the AI reads only when you ask)
+    ├── notes/                      ← your notes/scratch space (the AI reads only when you ask)
     └── memory/                     ← auto-memory (linked into Claude Code, see §7)
         ├── MEMORY.md               ← memory index
         └── _TEMPLATE_*.md          ← user / feedback / project / reference
@@ -131,7 +131,7 @@ The blueprint ships in **English**. At setup, `/setup` asks which language you w
 | `next_step.md` | AI | One active item. Done, it's overwritten with the next. |
 | `code_map/map_index.md` | AI | Code state: top view + pointers to fragments. |
 | `memory/` | AI (auto) | Persistent memory across sessions (§7). |
-| `ideas/` | You | Your scratch space. The AI reads it only when you ask. |
+| `notes/` | You | Your notes/scratch space. The AI reads it only when you ask. |
 | `history/` | Hook (auto) | Frozen versions. The AI never reads it. |
 
 ---
@@ -175,7 +175,7 @@ The AI never reads `history/`. It's your safety net for pulling back an old vers
 
 - One snapshot per file every ~20 min (tune it in the script).
 - Each file gets a subfolder, so `history/plan_tech/` is its full timeline.
-- Covers `.md` under `project_brain/`. The `roadmap/` and `memory/` folders stay out.
+- Covers `.md` under `project_brain/`. The `roadmap/`, `memory/`, and `notes/` folders stay out.
 
 > The hook runs through `run-hook.cmd`, which picks the `.ps1` on Windows and the `.sh` on Mac/Linux. Nothing to install on either.
 
@@ -247,4 +247,4 @@ Through the work, the truth stays aligned, mostly via skills:
 - Created/renamed/removed a doc → `fix-links` fixes the indexes.
 - Wrapping up → `/end` runs the whole ritual.
 
-You only write in `Vision.md` and `ideas/` when you feel like it. The AI keeps the rest.
+You only write in `Vision.md` and `notes/` when you feel like it. The AI keeps the rest.

@@ -11,4 +11,4 @@ Get oriented, read-only. Read in this order:
 3. For technical context: `project_brain/plan/plan_summary.md`.
 4. Before touching code: `project_brain/code_map/map_index.md`.
 
-Give the user a short recap: where we stopped, the next step, blockers if any. Touch no files. This is orientation.
+Give the user a short recap: where we stopped, the next step, blockers if any. Stay read-only; this is orientation.

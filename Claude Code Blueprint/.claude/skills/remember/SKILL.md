@@ -11,4 +11,4 @@ Save a memory in `project_brain/memory/` (the harness manages this folder):
 3. **Index**: add one line to `project_brain/memory/MEMORY.md`: `[Title](file.md): one-line hook`.
 4. **Cross-links** between memories use the full file basename `[[type_slug]]` (e.g. `[[feedback_estilo]]`). Obsidian resolves a wikilink against the filename, so it has to match the file exactly, including the `type_` prefix.
 
-Save what the code doesn't already hold: decisions, preferences, context, pointers to external systems. (Patterns, structure, and git history the AI rediscovers by reading the repo.)
+Save what lives outside the code: decisions, preferences, context, pointers to external systems. (Patterns, structure, and git history the AI rediscovers by reading the repo.)
