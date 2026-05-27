@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/hooks/snapshot.ps1\""
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/run-hook.cmd\" snapshot"
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/hooks/remind-map.ps1\""
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/run-hook.cmd\" remind-map"
           }
         ]
       }

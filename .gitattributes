@@ -1,0 +1,9 @@
+# Normalize text to LF in the repo by default.
+* text=auto
+
+# Shell scripts and the polyglot dispatcher must stay LF, or bash breaks on mac/linux.
+*.sh  text eol=lf
+*.cmd text eol=lf
+
+# PowerShell on Windows is happy with CRLF.
+*.ps1 text eol=crlf
