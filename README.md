@@ -19,7 +19,6 @@ I built this while developing a big project that kept outgrowing my head. The ch
 You will be setting up a few things, so you know what you are getting into:
 
 - **Obsidian**, installed, with the project folder open as a vault. The whole system lives in Obsidian.
-- The **superpowers** plugin. It ships auto-declared, so you accept one trust prompt the first time you open the project. The skills lean on it (and the plugin is very good overall).
 - **MCP** (optional). The setup offers to connect Claude to your open vault over MCP for a tighter loop. It is a bonus, not a requirement; skip it and everything still works over the filesystem.
 
 ## Get started
