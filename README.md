@@ -20,9 +20,7 @@ Claude reads the brain as plain markdown. Two optional layers sit on top: a type
 
 ## What runs it
 
-The work runs through skills: short commands you type (`/start`, `/done`, `/writeplan`) that Claude also fires on its own when the moment fits. The Code variant adds an execution engine forked from [superpowers](https://github.com/obra/superpowers) (MIT, by Jesse Vincent): test-first coding, root-cause debugging, code review, plan execution, worktrees. Each variant's README lists its full set.
-
-Commits and PRs never carry AI attribution, in any project; `/setup` wires a hook that strips it.
+The work runs through skills: short commands you type (`/start`, `/done`, `/writeplan`) that Claude also fires on its own when the moment fits. The Code variant adds an execution engine forked from [superpowers](https://github.com/obra/superpowers) (by Jesse Vincent): test-first coding, root-cause debugging, code review, plan execution, worktrees. Each variant's README lists its full set.
 
 ## Variants
 
