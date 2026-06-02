@@ -1,248 +1,98 @@
-# Workflow com Obsidian · um segundo cérebro pro Claude
+# Claudian: um segundo cérebro pro Claude Code
 
-Uma forma de trabalhar com IA que você pluga em qualquer projeto. Copie o conteúdo desta pasta pro projeto alvo, preencha os `{{PLACEHOLDERS}}`, rode o setup, apague o que não usar.
+Um workflow que transforma o Claude Code num segundo cérebro que você e a IA dividem. Uma verdade só, servindo os dois: você escreve a visão; a IA escreve o plano, o roadmap, o mapa do código e o próximo passo, cada um onde o outro consegue ler. Duas inteligências operando como uma.
 
-> Este arquivo só descreve o sistema. Depois de copiar pro projeto alvo, pode apagar.
-> 🌎 Speak English? See [README.md](README.md).
+> 🌎 Versão canônica em inglês: [README.md](README.md). O motor fica em inglês; o `/setup` traduz pro seu idioma tudo que você lê, mais os nomes de pastas e arquivos.
+
+É uma **pasta**, não um plugin: skills que você dispara como `/verbos` simples, hooks de snapshot, um guard de commit sem atribuição de IA, um **brain MCP** sem dependências, e o motor de execução forkado pra dentro. Joga a pasta no projeto, roda um comando, e o cérebro está vivo.
+
+---
+
+## 🚀 Instalar
+
+1. Baixe este repositório (ou um release) e jogue a pasta `Claude Code Blueprint/` dentro do seu projeto.
+2. Nesse projeto, rode:
+
+```
+/setup
+```
+
+O `/setup` move `CLAUDE.md`, `.claude/`, `project_brain/` e `.mcp.json` pra raiz do projeto, faz a fiação (link da memória, hook de commit-msg, `.gitignore`), pergunta seu idioma, mapeia seu código e absorve as notas que você já tem. Rode `/reload-skills` (Claude Code 2.1.152+) ou reabra a sessão pra carregar os `/verbos`.
+
+> O brain MCP precisa de `node` no PATH. Sem ele o cérebro ainda funciona (a IA lê `project_brain/` direto); você só perde o atalho das ferramentas tipadas.
+
+**Atualizar depois:** jogue a pasta nova e rode `/setup` de novo. Ele reconcilia as personalizações que você fez em vez de sobrescrever.
 
 ---
 
 ## 🧠 Modelo mental
 
-A ideia central: uma verdade só, servindo tanto a IA quanto o usuário.
+`Vision` e `notes/` são a sua mente; `plan/`, `roadmap/`, `code_map/` e `next_step` são da IA. Cada um escreve onde o outro lê. Dois princípios sustentam:
 
-Os dois princípios que fazem funcionar:
+1. **Índice mais descrição.** Cada pasta tem um índice que aponta pros arquivos com uma linha de descrição. A IA lê o índice e abre só o doc que precisa (ela não lê o cérebro inteiro a cada sessão). Você navega igual.
+2. **Rastreia as mudanças.** Um hook congela o "antes" de cada edição em `history/`. A IA nunca lê; é a sua rede de segurança.
 
-1. **Índice + descrição** Cada pasta tem um índice que aponta pros arquivos com uma linha de descrição. A IA lê esse índice e então escolhe o arquivo certo pra abrir, em vez de ler um `.md` inteiro de uma vez. Você navega do mesmo jeito.
-2. **Rastreie as mudanças** Salva o "antes" de cada edição em `history/`. A IA não lê essa pasta, ela está ali só pra você acompanhar as mudanças.
+Os rituais são **skills**: comandos curtos que você digita (`/done`, `/end`) e que a IA também dispara sozinha quando o momento casa.
 
-Pros rituais repetitivos (atualizar o roadmap, fechar a sessão, salvar uma memória) existem **skills**: comandos curtos que você digita (`/end`, por exemplo) e que a IA também dispara sozinha quando o momento pede.
-
----
-
-## 📂 O que tem aqui
-
-```
-_BLUEPRINT_WORKFLOW/
-├── README.md                       ← this file (delete it when you plug into a project)
-├── README.pt-BR.md                 ← Portuguese version of this file
-├── CLAUDE.md                       ← the project's work rules + the AI's starting index
-├── .claude/
-│   ├── settings.json               ← registers the hooks + declares the superpowers plugin
-│   ├── setup.ps1 / setup.sh        ← wire memory into the repo + the .gitignore block (Windows / Mac-Linux)
-│   ├── hooks/
-│   │   ├── run-hook.cmd            ← cross-OS dispatcher (.ps1 on Windows, .sh on Mac/Linux)
-│   │   ├── snapshot.ps1 / .sh      ← freeze the "before" into history/
-│   │   └── remind-map.ps1 / .sh    ← after a code edit, nudge to update the map
-│   └── skills/                     ← the workflow commands (see §5)
-│       ├── start/ done/ end/ remember/ map/ writeplan/ debloat/ setup/   (you trigger)
-│       └── check-map/ check-plan/ fix-links/                              (automatic)
-└── project_brain/                  ← the shared brain (you + the AI)
-    ├── Vision.md                   ← YOUR vision (you write, the AI reads)
-    ├── context.md                  ← stack, principles, project rules (indexed by CLAUDE.md)
-    ├── plan/                       ← the AI's technical plan
-    │   ├── plan_index.md           ← hub (navigation only)
-    │   ├── plan_summary.md         ← overview + pointers (reading entry)
-    │   ├── plan_why.md             ← the what/why (critical read, open questions)
-    │   └── plan_tech.md            ← the how (architecture, decisions, metrics)
-    ├── roadmap/
-    │   ├── roadmap_index.md        ← how the roadmap works
-    │   ├── roadmap.md              ← ACTIVE checklist (only what's left)
-    │   └── roadmap_log.md          ← append-only log
-    ├── next_step.md                ← one active item (overwritten each time)
-    ├── code_map/
-    │   └── map_index.md            ← code map index (method lives in /map)
-    ├── history/                    ← automatic snapshots (the AI never reads it)
-    ├── notes/                      ← your notes/scratch space (the AI reads only when you ask)
-    └── memory/                     ← auto-memory (linked into Claude Code, see §7)
-        ├── MEMORY.md               ← memory index
-        └── _TEMPLATE_*.md          ← user / feedback / project / reference
-```
+Três camadas: **L0 filesystem** (sempre ligado, headless) avança pra **L1 brain MCP** (índice tipado sobre o `project_brain/`, registrado via `.mcp.json`, roda no terminal e dentro do Claudian) e pra **L2 Obsidian MCP** (opcional, só com o Obsidian aberto, dá grafo e Bases).
 
 ---
 
-## 🚀 1. Setup
+## 🛠️ Skills
 
-> ⚡ **Automático:** jogue a pasta `Claude Code Blueprint/` inteira no projeto e cole:
-> > *"Read `Claude Code Blueprint/.claude/skills/setup/SKILL.md` and set this up in this project, reconciling with whatever is already here and preserving my content."*
->
-> A IA instala do zero (ou atualiza no lugar, se já tiver uma versão lá), move os arquivos pra raiz, roda o setup, pergunta qual idioma você quer e apaga a pasta da blueprint no fim. O que já estava no seu projeto fica onde está. Depois reabra a sessão pros comandos (`/start`, `/end`...) carregarem.
+Você digita `/nome` (um verbo simples); a IA também dispara quando o contexto casa.
 
-Prefere na mão? Nesta ordem:
-
-**1. Copie** `CLAUDE.md`, `.claude/` e `project_brain/` pra raiz do projeto alvo. (O conteúdo, não a pasta `Claude Code Blueprint/` em si. `.claude/` e `CLAUDE.md` precisam ficar na raiz, senão o Claude Code não acha.)
-
-**2. Preencha os `{{PLACEHOLDERS}}`** em `CLAUDE.md` e `project_brain/context.md`.
-
-**3. Rode o setup** (conecta a memória ao repo + o bloco do `.gitignore`):
-   - Windows: `powershell -NoProfile -ExecutionPolicy Bypass -File .claude\setup.ps1`
-   - Mac/Linux: `bash .claude/setup.sh`
-
-**4. (Recomendado) Conecte o Obsidian via MCP** (§9). Dá olhos à IA dentro do vault.
-
-**5. Escreva sua visão** em `project_brain/Vision.md`. O quê e o porquê, sem precisar ser técnico.
-
-**6. Peça à IA** (ou use as skills) que gere, a partir da sua visão e de uma leitura do código: o plano técnico (`/writeplan`), o mapa do código (`/map`) e então o `roadmap`.
-
-**7. Defina o `next_step.md`** com uma ação concreta.
-
-**8. Confira o hook**: edite qualquer doc vivo e veja um snapshot aparecer em `project_brain/history/`.
-
-> ⚠️ **Já tem suas próprias notas ou uma pasta de workflow antiga?** Ela fica onde está, o setup não encosta. Depois de instalar, é só pedir pro Claude ler e incorporar as partes úteis na estrutura (visão, plano, roadmap, memória). Ele adapta o conteúdo com seu OK, sem mapeamento rígido. Procedimento completo: `.claude/skills/setup/SKILL.md`.
-
-> ⚠️ **Projeto existente com um `.gitignore`:** o setup acrescenta o bloco do Claude, não sobrescreve. Se seu time versiona um `CLAUDE.md`, decida se vai escondê-lo (o bloco padrão ignora `CLAUDE.md`; edite o bloco no script de setup pra mantê-lo versionado).
-
-> 🦸 **plugin superpowers (vem declarado):** o `.claude/settings.json` já declara `superpowers@claude-plugins-official`. Quando você confiar na pasta do projeto, o Claude Code pede pra instalar o marketplace + plugin. Instalado, ele carrega a skill `using-superpowers` no início de toda sessão. Sem prompt? Rode `claude plugin install superpowers@claude-plugins-official`.
-
----
-
-## 🌎 2. Idioma
-
-A blueprint vem em **inglês**. No setup, o `/setup` pergunta qual idioma você quer e **localiza a instalação**: traduz a prosa que você lê e edita (os docs de `project_brain/`, o `CLAUDE.md`, os gatilhos das skills) e também os nomes de pasta, arquivo e comando, reescrevendo cada referência pra links e hooks continuarem funcionando. Um punhado de nomes que o Claude Code e o motor exigem fica em inglês (`.claude/`, os scripts de hook, o `settings.json`, a pasta `memory/`). Então sua mãe roda tudo em português, um alemão em alemão, tudo a partir de uma fonte só.
-
----
-
-## 🔖 3. Placeholders
-
-| Placeholder | O que é |
-|-------------|---------|
-| `{{PROJECT_NAME}}` | nome curto do projeto |
-| `{{PROJECT_DESCRIPTION}}` | uma linha sobre o que o projeto faz |
-| `{{USER}}` | como a IA te chama |
-| `{{PRINCIPLES}}` | prioridades quando as coisas conflitam |
-| `{{STACK}}` | linguagem/runtime/ambiente |
-| `{{SPECIFIC_RULES}}` | regras exclusivas deste projeto |
-
-> `STACK`, `PRINCIPLES` e `SPECIFIC_RULES` ficam em `project_brain/context.md`; o resto em `CLAUDE.md`.
-
----
-
-## 🗂️ 4. Os arquivos vivos
-
-| Arquivo | Quem escreve | Pra quê |
-|---------|--------------|---------|
-| `Vision.md` | Você | Sua visão: o quê e o porquê. A IA lê e deriva o plano. |
-| `context.md` | Você | Stack, princípios, regras específicas do projeto. |
-| `plan/plan_summary.md` | IA | Entrada do plano técnico: visão geral curta + pointers. |
-| `plan/plan_why.md` | IA | Leitura crítica da sua visão, riscos, questões em aberto. |
-| `plan/plan_tech.md` | IA | Arquitetura por fase, decisões técnicas, métricas. |
-| `roadmap/roadmap.md` | IA | Checklist ativo, só o que falta. |
-| `roadmap/roadmap_log.md` | IA | Log append-only. A IA só escreve aqui. |
-| `next_step.md` | IA | Um item ativo. Concluído, é sobrescrito pelo próximo. |
-| `code_map/map_index.md` | IA | Estado do código: visão de topo + pointers pros fragmentos. |
-| `memory/` | IA (auto) | Memória persistente entre sessões (§7). |
-| `notes/` | Você | Seu espaço de notas/rascunho. A IA lê só quando você pede. |
-| `history/` | Hook (auto) | Versões congeladas. A IA nunca lê. |
-
----
-
-## 🛠️ 5. Skills / comandos
-
-Uma skill funciona de dois jeitos ao mesmo tempo: você digita `/nome`, e a IA dispara sozinha quando o contexto casa com o `when_to_use` dela. As skills carregam o procedimento; as regras do `CLAUDE.md` são a base curta.
-
-**Rituais (você dispara, ou a IA quando reconhece o momento):**
+**Núcleo do cérebro** (o segundo cérebro, funciona em qualquer projeto):
 
 | Comando | O que faz |
 |---------|-----------|
-| `/setup` | Onboarding: instala/migra a blueprint num projeto. Use ao plugar a pasta. |
-| `/start` | Orientação read-only: onde paramos + o próximo passo. |
-| `/done` | Fecha uma tarefa terminada na hora: registra no log, poda o roadmap, atualiza o mapa se a estrutura mudou, define o próximo passo. |
-| `/end` | Varredura de rede de segurança no fim da sessão: mapa, log, roadmap, next_step, links mortos, pegando o que um fechamento de tarefa deixou passar. |
-| `/remember` | Salva uma memória no formato certo + indexa. |
+| `/setup` | Instala ou reconcilia o cérebro num projeto. |
+| `/start` | Orientação read-only: onde paramos mais o próximo passo (`brain_orient`). |
+| `/done` | Fecha uma tarefa: loga, poda o roadmap, define o próximo passo, finaliza a branch quando uma está pronta. |
+| `/end` | Varredura de rede de segurança no fim da sessão, pegando o que um fechamento de tarefa deixou passar. |
+| `/remember` | Salva uma memória no formato certo e indexa. |
+| `/writeplan` | Deriva o `plan/` da sua `Vision.md`, ou vira um spec aprovado em plano executável. |
+| `/brainstorm` | Explora intenção e design antes de construir; escreve o spec no `plan/`. |
+| `/debloat` | Enxuga o `project_brain/`: corta redundância, poda o obsoleto, conserta links. |
+
+**Motor de código** (forkado do superpowers):
+
+| Comando | O que faz |
+|---------|-----------|
+| `/tdd` | Red-green-refactor; nada de código de produção sem um teste falhando antes. |
+| `/diagnose` | Investigação de causa raiz antes de qualquer fix. |
+| `/critique` | Pede um code review (subagente revisor) e recebe um com rigor técnico. |
+| `/execute` | Roda um plano do `plan/`, por subagentes ou inline com checkpoints. |
+| `/worktree` | Isola o trabalho de feature num git worktree. |
+| `/writeskill` | Escreve ou edita uma skill, testada antes de subir. |
 | `/map` | (Re)constrói o mapa do código. |
-| `/writeplan` | Deriva ou atualiza `plan/` a partir do seu `Vision.md`. |
-| `/debloat` | Enxuga `project_brain/`: corta redundância, poda o obsoleto, fragmenta arquivos grandes, conserta links. |
 
-**Automáticas (a IA dispara, você não chama):**
+Automáticas (a IA dispara): `check-map`, `check-plan`, `fix-links`.
 
-| Skill | Quando a IA puxa |
-|-------|------------------|
-| `check-map` | prestes a mexer em código que não conhece; lê o mapa antes |
-| `check-plan` | prestes a mudar arquitetura ou uma decisão fechada; checa o plano antes |
-| `fix-links` | acabou de criar/renomear/remover um doc; conserta o índice + links |
+Mais dois trabalhadores baratos em `.claude/agents/`: `brain-researcher` (read-only, haiku, pra discovery fora da thread principal) e `doc-scribe` (manutenção pesada de docs).
 
 ---
 
-## 💾 6. Snapshot (versionamento automático)
+## 🦸 O motor, forkado pra dentro
 
-Antes de um doc vivo ser editado, um hook congela o "antes" em `history/`:
-
-```
-project_brain/history/<file>/<file> YYYY-MM-DDTHH-mm-ss.md
-```
-
-A IA nunca lê `history/`. É sua rede de segurança pra recuperar uma versão antiga.
-
-- Um snapshot por arquivo a cada ~20 min (ajuste no script).
-- Cada arquivo ganha uma subpasta, então `history/plan_tech/` é a linha do tempo completa dele.
-- Cobre `.md` em `project_brain/`. As pastas `roadmap/`, `memory/` e `notes/` ficam de fora.
-
-> O hook roda via `run-hook.cmd`, que escolhe o `.ps1` no Windows e o `.sh` no Mac/Linux. Nada pra instalar em nenhum dos dois.
+As skills do motor de código vêm do [superpowers](https://github.com/obra/superpowers) (MIT, do Jesse Vincent), enxugadas, renomeadas pra verbos simples e fundidas com o cérebro pra que a saída caia em `project_brain/`. Não há plugin separado pra instalar nem nada pra configurar: o cérebro e o motor vêm numa pasta só, e o `CLAUDE.md` está acima de qualquer skill, então trabalho trivial pula os portões pesados. TDD, debugging, brainstorming, o pipeline de plano/execução, code review e worktrees compõem sem mudança; `/writeplan` e `/done` cuidam do plano do projeto e do roadmap. Os créditos ficam em `.claude/NOTICE.md`.
 
 ---
 
-## 🧩 7. Memória
+## 🔒 Git: nunca atribuição de IA
 
-A IA mantém memória persistente como arquivos `.md` com frontmatter. Quatro tipos: **user** (quem você é, como colaborar), **feedback** (correções e abordagens confirmadas), **project** (decisões, prazos, contexto que não está no código), **reference** (pointers pra sistemas externos).
-
-Uma memória é um arquivo mais uma linha no `MEMORY.md` (o índice). Salve com `/remember`.
-
-> Não salve o que o código já guarda (padrões, estrutura, histórico do git). A memória é pro que não está no código.
-
-### 🔗 Memória dentro do vault
-
-Por padrão o Claude Code mantém a memória fora do repo. O setup a conecta em `project_brain/memory/` com uma junction (Windows) ou symlink (Mac/Linux), sem precisar de admin. Mesmos arquivos, um lugar só: edite uma memória no Obsidian e é a real. Sua auto-memória viva passa a morar fisicamente dentro do repo, em `project_brain/memory/` (a junction reaponta a memória do harness pra lá); como `project_brain/` está no gitignore, ela fica só local e fora do snapshot. (`memory/` fica fora do snapshot, então uma exclusão ali não tem backup em `history/`.)
-
-Dentro de `memory/` o formato é o do harness: `MEMORY.md` usa `[Title](file.md)`, cross-links usam o basename completo do arquivo `[[type_slug]]` (ex.: `[[feedback_estilo]]`), que é o que o Obsidian resolve. Se o repo se mover ou for clonado, rode o setup de novo pra reapontar o link.
+Commits e PRs não levam `Co-Authored-By` nem rodapé "Generated with", em projeto nenhum. O `/setup` instala um hook `commit-msg` que remove esses trailers (encadeia um hook existente, integra com husky, respeita `core.hooksPath`), o `settings.json` desliga a atribuição do próprio Claude Code, e um guard `guard-commit` bloqueia os atalhos comuns `--no-verify`/`-n`. O hook commit-msg mais esse setting são a garantia real; o guard é defesa em profundidade. O git não consegue dar hook num corpo de PR, então o `CLAUDE.md` carrega a regra pra IA seguir ali.
 
 ---
 
-## 🔒 8. Git
+## ⚡ Por que se paga
 
-O setup acrescenta este bloco ao `.gitignore` (criando-o se necessário, sem sobrescrever):
+Um segundo cérebro devolve os tokens que custa. Sem ele, toda sessão re-deriva contexto relendo e re-explorando o repo; com ele, o `brain_orient` reconstrói o contexto de um índice pequeno mais alguns docs alvo, do jeito que recuperação ganha de releitura.
 
-```
-# === Claude workflow (do not version) ===
-.claude/
-CLAUDE.md
-project_brain/
-```
-
-Assim você dá push e nada do workflow do Claude aparece no repo. Quer versionar `memory/` (ou `CLAUDE.md`) mesmo assim? Edite o bloco no script de setup antes de rodar.
+A própria orientação de engenharia de contexto da Anthropic recomenda exatamente esse formato (recuperação just-in-time por identificadores leves, subagentes que devolvem resumos destilados, divulgação progressiva por metadados). Os evals de memória mais edição de contexto deles mostram até **84% menos tokens** em runs agênticos longos. O cache de prompt cobra leituras em cache por uma fração da entrada base, e o Claudian é feito pra manter o cache quente: `CLAUDE.md` fica congelado no prefixo, o que muda mora em `project_brain/` (lido sob demanda, anexado em vez de mutado), e a superfície de ferramentas fica pequena e estável. O brain MCP usa carregamento adiado: o `brain_orient` fica sempre carregado, os outros cinco carregam sob demanda. O custo sempre-ligado medido fica em torno de 1,2k tokens por sessão. O ganho cresce com o projeto.
 
 ---
 
-## 🔌 9. MCP do Obsidian (recomendado)
+## 🎨 Faça seu
 
-O MCP dá à IA acesso direto ao seu vault aberto, então ela lê e edita notas pelo app por cima do filesystem.
-
-Duas coisas diferentes levam o nome "Obsidian + Claude". Separe as duas:
-
-- **Um servidor MCP que expõe o vault** (esta seção): um plugin roda um servidor MCP dentro do Obsidian, e o Claude Code se conecta a ele.
-- **Um agente hospedado dentro do Obsidian** (ex.: `yishentu/claudian`, `rait-09/obsidian-agent-client`): o Claude roda como sidebar dentro do app. Setup diferente, pule pra este caso.
-
-Pra expor o vault por MCP:
-
-1. No Obsidian: **Settings → Community plugins**, instale o **Obsidian MCP** (`aaronsb/obsidian-mcp-plugin`, listado como "Semantic Notes Vault MCP"). Habilite.
-2. Abra a aba de settings dele, gere uma **API key**, e anote a porta (padrão `3001`).
-3. Mantenha o **Obsidian aberto no vault deste projeto**. O servidor roda de dentro do app, então Obsidian fechado significa MCP simplesmente ausente (a IA cai de volta pro filesystem, que funciona bem).
-4. No Claude Code, da raiz do projeto, registre uma vez:
-   ```
-   claude mcp add --transport http obsidian http://localhost:3001/mcp --header "Authorization: Bearer <sua-api-key>"
-   ```
-
-Persiste entre sessões: registra uma vez e daí em diante conecta sempre que o Obsidian estiver aberto no vault. Um vault por blueprint.
-
----
-
-## 🗺️ 10. No dia a dia
-
-Ao começar uma sessão (ou `/start`), a IA segue a cola do `CLAUDE.md`: lê `CLAUDE.md`, depois `next_step.md`, e puxa `plan_tech`, `map_index`, `Vision` ou `MEMORY` conforme a necessidade.
-
-A regra de bolso: atualize ao concluir, com o contexto quente. Fechar cada tarefa na hora mantém os docs verdadeiros enquanto a IA ainda segura o contexto; o `/end` é o backstop. Ao longo do trabalho, a verdade fica alinhada, principalmente via skills:
-- Terminou uma tarefa → `/done`, na hora (registra no log, poda o roadmap, atualiza o mapa se a estrutura mudou, define o próximo passo).
-- Prestes a mudar arquitetura → `check-plan` dispara; se o plano mudou, atualize o roadmap.
-- Criou/renomeou/removeu um doc → `fix-links` conserta os índices.
-- Fechando → `/end`, a varredura de rede de segurança que pega o que um fechamento de tarefa deixou passar.
-
-Você só escreve em `Vision.md` e `notes/` quando der vontade. A IA mantém o resto.
+O Claudian se adapta a qualquer projeto e se dobra a você. A personalidade do projeto mora no `CLAUDE.md` (regras) e no `project_brain/context.md` (stack, princípios, regras do projeto); edite à vontade. O cérebro fica local na sua máquina por padrão (gitignored), então é pessoal; pra dividir o plano e o roadmap com um time, versione o espinhaço do cérebro (o comentário no script de setup mostra a mudança de uma linha). O motor mora no `.claude/` do seu projeto (skills, hooks, o brain MCP), então é seu pra editar. Atualize jogando a pasta nova e rodando `/setup` de novo, que reconcilia o que você mudou.

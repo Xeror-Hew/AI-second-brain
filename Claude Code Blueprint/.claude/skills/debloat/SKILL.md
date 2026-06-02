@@ -4,7 +4,7 @@ description: Trim project_brain: cut redundancy, prune stale content, fragment o
 when_to_use: user says "debloat", "trim this", "clean it up", "it's bloated"; or a living doc grew too big, an index became a wall of text, or content is repeated across files
 ---
 
-Trim `project_brain/` while keeping the truth intact. Works on the living docs. The `history/` folder stays out; `memory/` gets reconciled against the living docs for accuracy (step 7). For user content (`Vision.md`, `notes/`), confirm before cutting.
+Trim `project_brain/` while keeping the truth intact. Works on the living docs. The `history/` folder stays out; `memory/` gets reconciled against the living docs for accuracy (step 7). For user content (`Vision.md`, `notes/`), confirm before cutting. To target the heaviest items with data, `/usage` breaks cost down by skill, subagent, and MCP server.
 
 1. **Oversized file**: fragment it (hub and spoke), a lean index plus spokes by topic. Usual suspects: a `map_index` or `plan_*` that became a wall.
 2. **Redundancy**: if the same info lives in two places, keep it at the canonical source and replace the copy with a path-style pointer (`[[project_brain/...]]`).

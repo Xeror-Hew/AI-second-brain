@@ -1,96 +1,85 @@
 ---
 name: setup
-description: Install this blueprint into a project, fresh or as an upgrade. Wires it up, fills placeholders, localizes, and can fold existing notes into the structure when asked.
+description: Install this blueprint into a project, fresh or as an upgrade. Maps the code, builds the brain, folds in existing notes, merges CLAUDE.md, localizes, and reconciles your customizations on update.
 when_to_use: when dropping this blueprint into a project (new or existing), or updating it to a newer version; user says "setup", "install the blueprint", "set this up", "onboard", "update the blueprint"
 ---
 
-You just got dropped into a project with this blueprint. Orchestrate the install. **Preserve the user's content**: never rename or delete their folders, and confirm before moving anything that is theirs.
+You just got dropped into a project with this blueprint. Orchestrate the install. **Preserve the user's content**: never rename or delete what is theirs, and confirm before moving anything you did not create.
 
-## 0. Where the blueprint files are
+## 0. Place the files
 
-The only pieces you install are `CLAUDE.md`, `.claude/`, and `project_brain/`. They may be:
-- **Already at the root**: go straight ahead.
-- **Inside the folder the user dropped** (e.g. `Claude Code Blueprint/`): that's the source. Move just those three to the root. The folder's own `README.md` and `README.pt-BR.md` are install docs, not part of the project: leave them in the dropped folder and delete the whole folder at the end. Never copy a `README` over one the user already has. Then tell the user to reopen the session so the skills load from the root.
+The installed footprint is `CLAUDE.md`, `.claude/`, `project_brain/`, and `.mcp.json` at the project root. They may be:
+- **Already at the root**: go ahead.
+- **Inside the folder the user dropped** (e.g. `Claude Code Blueprint/`): that is the source. Move those four to the root. `README.md` and `README.pt-BR.md` are install docs, not part of the project; leave them in the dropped folder and delete the whole folder at the end. Never copy a README over one the user already has.
 
-## 1. Which case is this?
+If the project already has its own `.claude/settings.json` or `CLAUDE.md`, merge rather than overwrite: keep the project's keys and rules, add the blueprint's `hooks`, `includeCoAuthoredBy: false`, the empty `attribution`, and the `enabledPlugins` entry that turns the external `superpowers` plugin off for this project (the engine is forked in, so the plugin would only duplicate skills and double the session injection; it stays on in the user's other projects). The no-AI-attribution policy is fixed: keep it on even if the project had it off.
 
-- **Not installed yet** (a fresh project, or an existing one with its own files): install fresh, §2. Anything already in the project that is not part of the blueprint stays exactly where it is.
-- **Already installed** (the root has a `.claude/.blueprint-version` or a `project_brain/`) and the dropped folder is a newer copy: upgrade, §3.
+Then have the user run `/reload-skills` (Claude Code 2.1.152+) or reopen the session so the bare `/verbs` load.
+
+## 1. Which case?
+
+- **Fresh** (no root `project_brain/` and no `.claude/.blueprint-version`): §2. Anything in the project that is not part of the blueprint stays exactly where it is.
+- **Upgrade** (the root has them and the dropped folder is newer): §3.
 
 ## 2. Install (fresh)
 
-1. Run the OS setup script. Windows: `powershell -NoProfile -ExecutionPolicy Bypass -File .claude\setup.ps1`. Mac/Linux: `bash .claude/setup.sh`. (Memory junction/symlink plus the `.gitignore` block.) The auto-mode permission classifier often denies this call (the `-ExecutionPolicy Bypass` on a freshly-dropped script reads as running an unreviewed script). If it's blocked, either ask the user to run the line themselves with a `!` prefix in the prompt, or do the script's two operations yourself: append the Claude block to `.gitignore`, and create the memory junction (`mklink /J <harness-memory-path> <project_brain/memory>` on Windows, the symlink equivalent on Mac/Linux).
-2. Fill the `{{PLACEHOLDERS}}` in `CLAUDE.md` and `project_brain/context.md`. Ask the user for what you can't infer.
-3. **Language**: see §4.
-4. Ask for the user's vision in `project_brain/Vision.md`, or help write it.
-5. If there's code, run `/map`. With the vision, run `/writeplan`, then derive the `roadmap`.
-6. Set `project_brain/next_step.md` to one item.
-7. Remind them about the superpowers plugin: `.claude/settings.json` already declares it, so when they trust the project folder Claude Code offers to install the marketplace plus plugin in one click. No prompt? `claude plugin install superpowers@claude-plugins-official`.
-8. **MCP**: see §5.
-9. **Existing notes or an old workflow?** If the project already has plans, notes, or its own workflow folder, leave it where it is. Offer to read it and fold the useful parts into the structure (Vision, plan, roadmap, memory), using judgment and confirming as you go. Adapt the content, do not force a rigid mapping, and never move or delete the user's own files without asking. If the project already carries accumulated auto-memory, it probably duplicates the docs you just created (roadmap, plan, code map, environment), and stale memory diverges from the live docs over time. Offer to reconcile it now with `/debloat`, which handles a memory pass.
+The flow builds the brain on top of the real project, in order:
 
-## 3. Upgrade (same blueprint, newer version)
+1. **Wire the OS.** Run the setup script: Windows `powershell -NoProfile -ExecutionPolicy Bypass -File .claude\setup.ps1`, Mac/Linux `bash .claude/setup.sh`. It creates the memory junction/symlink, the `.gitignore` block, and the no-AI-attribution `commit-msg` hook. If the auto-mode classifier blocks the `-ExecutionPolicy Bypass` call (a freshly dropped script reads as unreviewed), ask the user to run the line with a `!` prefix, or do the operations yourself: append the gitignore block, create the memory junction (`mklink /J` on Windows, the symlink on Mac/Linux), and install the `commit-msg` hook (resolve the hooks dir: `.husky/` if present, else `git config core.hooksPath`, else `git rev-parse --git-path hooks`; copy the body and marker-based idempotency/backup logic, `chmod +x`).
+2. **Map the code.** If the project has code, run `/map` first. The brain gets built on what the map reveals.
+3. **Build the brain on the map.** Fill the `{{PLACEHOLDERS}}` in `CLAUDE.md` and `project_brain/context.md` (ask for what you cannot infer). Ask for the user's vision in `project_brain/Vision.md`, or draft it from the code and the map for them to confirm. Run `/writeplan`, derive the `roadmap`, set `next_step.md` to one item.
+4. **Absorb scattered notes.** If the project already carries plans, notes, or its own workflow folder, leave the originals where they are and offer to fold the useful parts into the structure (Vision, plan, roadmap, memory). Adapt the content, do not force a rigid mapping, confirm as you go. Move clearly-stale ideas into `project_brain/history/` rather than deleting them.
+5. **Reconcile memory.** If the project carries accumulated auto-memory, it probably duplicates the docs you just built (roadmap, plan, map) and drifts from them over time. Offer to reconcile it now with `/debloat` (it runs a memory pass).
+6. **Language**: §4.
+7. **MCP**: §5.
+8. **Report.** Recap what you did, mapped, built, absorbed, reconciled, plus the `next_step`.
 
-The project already runs this blueprint and the dropped folder is the new version. Refresh the engine, keep the user's content.
+## 3. Upgrade (newer version, keep the user's work)
 
-1. **Check versions.** Read `.claude/.blueprint-version` in the dropped folder and at the root. No file at the root means a pre-versioning install: treat it as older. Dropped version not newer: tell the user they are already up to date and stop. Dropped version older: say it is a downgrade and confirm before going on.
-2. **Refresh the engine.** Replace the root `.claude/` with the dropped one: hooks, skills, setup scripts, `settings.json`, and the version marker. Pure template, safe to overwrite. The auto-mode classifier may prompt the user to approve edits to `.claude/skills/**` and `CLAUDE.md`, since it treats them as agent-startup-config self-modification. This is expected; the user approves on the spot or adds a permission rule.
-3. **Merge `CLAUDE.md`.** The new one is the base; carry over the user's filled placeholders and any custom rules from the root one.
-4. **Leave the content alone.** Do not touch the root `project_brain/` or `memory/`. The dropped folder's `project_brain/` is an empty template, never copy it over the user's.
-5. **If the install was localized** (the root content is not in English), re-run §4 on the new engine so the refreshed skills and `CLAUDE.md` speak the user's language again.
-6. Run the OS setup script (idempotent: fixes the junction and gitignore if needed).
-7. Run `/fix-links` if any doc moved or got renamed in this version.
-8. Delete the dropped folder. Tell the user to reopen the session so the new skills load.
+Refresh the engine and reconcile the customizations. Never wipe what the user changed.
+
+1. **Check versions.** Compare `.claude/.blueprint-version` in the dropped folder against the root. No root file means a pre-versioning install, treat it as older. Dropped not newer: tell them they are up to date and stop. Dropped older: say it is a downgrade and confirm first.
+2. **Reconcile the engine, do not blind-overwrite.** The engine (`.claude/skills`, `hooks`, `mcp`, `agents`, setup scripts, version marker) is template, but the user may have customized it. For each engine file: if the root copy matches the old version, replace it with the new one; if the user changed it, reason about the merge, bring in the new version's improvements, and keep their change, asking when a conflict is genuinely unclear. `settings.json`: merge (keep their `permissions`/`env`/custom hooks; bring in the blueprint's `hooks`/`includeCoAuthoredBy`/`attribution`/`enabledPlugins`).
+3. **Merge `CLAUDE.md`.** The new one is the base; carry over the user's filled placeholders and any custom rules.
+4. **Leave the content alone.** Do not touch the root `project_brain/` docs or `memory/`. The dropped `project_brain/` is an empty template, never copy it over theirs. Bring in a genuinely new template file (a new doc type this version adds) without overwriting an existing one.
+5. **Localized install?** If the root content is not in English, re-localize the refreshed engine (skill folder names, `CLAUDE.md` prose, each skill's `description`/`when_to_use`) into the user's language, and reconcile the manifest per §4 "Localized upgrades". The user's existing localized folders and `.brain.json` stay untouched; you only translate what this version newly added.
+6. Run the OS setup script (idempotent: fixes the junction and gitignore if needed). Run `/fix-links` if a doc moved or got renamed this version.
+7. Delete the dropped folder. Have the user run `/reload-skills` or reopen the session.
 
 ## 4. Language (localization)
 
-First, infer the user's language from how they have been writing in this conversation. Phrase the whole `AskUserQuestion` (question, labels, descriptions) in that language, so someone who reads no English still understands the prompt. Fall back to English only when the language is genuinely unclear.
+Infer the user's language from how they write in this conversation. Phrase the whole `AskUserQuestion` (question, labels, descriptions) in that language, so someone who reads no English still understands it. The blueprint ships in English; present one question with three options (written in the inferred language): keep English · translate to <inferred language> · choose another.
 
-The blueprint ships in English. Present the choice with one `AskUserQuestion` call, a single question about install language, with these three options (written in the inferred language):
+English: skip the rest. Any other choice localizes both the prose and the names.
 
-- **Keep it in English** the original canonical language, no translation.
-- **Translate to <inferred language>** everything human-facing into the language inferred from the conversation. Name it in the label, e.g. "Portuguese (Brazilian)".
-- **Choose another language** the user names which, then translate into that.
+**Translate the prose** (what the human reads): the docs in `project_brain/`, `CLAUDE.md`, each skill's `description` and `when_to_use`.
 
-English: skip the rest of this step. Any other choice: localize the install. Localizing translates the human text **and** the folder, file, and skill (command) names, then rewrites every reference so nothing breaks. Do this carefully; a missed reference breaks a link or silently kills the snapshot hook.
+**Localize the names through the manifest** `project_brain/.brain.json`. For each canonical key under `names`, set the value to the translated folder/file name (`plan`→`plano`, `roadmap`→`roteiro`, `next_step`→`proximo_passo`, `code_map`→`mapa`, `notes`→`notas`, `Vision`→`Visao`, `context`→`contexto`); under `sections`, translate the two roadmap headings (`BLOCKERS`, `CURRENT FRONT`). Then rename the physical folders and files on disk to match the values, including the files inside them (`roteiro/roteiro.md`, `roteiro/roteiro_log.md`, the `plano_*.md`, and so on). The brain MCP and the snapshot hook read the manifest, so resolution follows automatically; you patch no engine script. `project_brain`, `history`, and `memory` stay canonical, do not rename them or list them in the manifest.
 
-**Translate the prose** (what the human reads/edits): the docs in `project_brain/`, `CLAUDE.md`, the README, each skill's `description` and `when_to_use` triggers.
+**Localize the commands**: rename the skill folders under `.claude/skills/` (the folder name is the slash command), then rewrite every `/verb` token in `CLAUDE.md`, the docs, and inside skill bodies to the localized command. The skill-body prose stays English; only the command tokens change.
 
-**Translate the names** (rename, then rewrite all references):
-- `project_brain/` and its subfolders `plan/`, `roadmap/`, `code_map/`, `history/`, `notes/`.
-- The doc files: `Vision.md`, `context.md`, `next_step.md`, the `plan_*.md`, `roadmap*.md`, `map_index.md`, `notes_index.md`.
-- The skill folders under `.claude/skills/`. The folder name **is** the slash command, so renaming `start/` to the localized verb renames `/start`.
+**Stays English** (renaming breaks the engine or the Claude Code contract): `.claude/`, `CLAUDE.md`, `settings.json` and its keys, the hook script filenames, `.mcp.json`, `.blueprint-version`, the `{{PLACEHOLDERS}}`, MCP tool names, and the whole `memory/` subtree (harness-owned).
 
-**Stays English** (renaming these breaks the engine or the Claude Code contract):
-- `.claude/` and `CLAUDE.md`: Claude Code requires these exact names at the root.
-- `settings.json` and its keys.
-- The hook script files and extensions: `run-hook.cmd`, `snapshot.ps1`/`snapshot.sh`, `remind-map.ps1`/`remind-map.sh`.
-- `.blueprint-version`, the `{{PLACEHOLDERS}}`, tool names.
-- The whole `memory/` subtree: the folder `memory/`, `MEMORY.md`, and the `_TEMPLATE_*.md` files. The harness auto-memory owns that folder and writes those exact names itself; translating them desyncs from the harness.
+**Rewrite the references**: every wikilink and path in `CLAUDE.md` and the docs becomes the translated path.
 
-**What renaming forces you to rewrite** (go through all of these):
-- Every wikilink and path reference across `CLAUDE.md`, the docs, and the indexes becomes the translated path.
-- Skill cross-references: command tokens like `/done`, `/map`, `/fix-links`, `/writeplan` in `CLAUDE.md`, the README, and inside skill bodies become the localized commands (the folder name is the command). The surrounding skill-body prose stays English; only the command tokens change.
-- The hooks hardcode folder names as literal strings. `snapshot.ps1` and `snapshot.sh` test for the `project_brain` marker and exclude `history`, `memory`, `roadmap`, `notes` by literal name; `setup.ps1`/`setup.sh` hardcode the `project_brain/memory` junction target and list `project_brain/` in the `.gitignore` block. If you rename `project_brain` or a snapshotted subfolder, patch those literals in all four scripts, or the snapshot hook silently stops firing (the hooks always exit 0, so a wrong path fails invisibly).
+**Verify after localizing**: edit a living doc and confirm a snapshot lands under `history/`; call `brain_orient` and confirm it still finds the next step and roadmap; grep the docs and skills for stray old command tokens.
 
-**Verify after localizing:** edit any living doc and confirm a snapshot lands under the (translated) `history/` folder. This is the existing "check the hook" step, reused to catch a broken snapshot path. Then grep the docs and skills for stray old command tokens left from the rename.
+### Localized upgrades (what keeps a future version from breaking a localized install)
 
-The one real downside: localized commands and paths diverge from the README and any community references, which all use the English names.
+The localized names live as data in `project_brain/.brain.json`, and the engine (brain MCP plus the snapshot hook) resolves every path through it. No localized path is ever baked into engine code, so refreshing the engine on an upgrade cannot break a localized install. When upgrading one (§3 step 5):
+
+1. **Keep the user's `.brain.json` and their renamed folders/files untouched.** Existing localized content keeps resolving through the preserved manifest.
+2. **Reconcile only what is new.** Diff the new version's shipped default `.brain.json` (the canonical key-set for this version) against the user's. For each canonical key this version adds and the user lacks: translate its value into the user's language, add the key to the user's `.brain.json`, and create the matching localized folder or file. Translate any new `sections` heading the new version reads.
+3. **Never re-translate or rename an existing key.** Touch only the additions, then run the verify step above.
 
 ## 5. MCP (final step, conversational)
 
-Setup ran and language is handled. Now walk the user through the Obsidian MCP in conversation. The MCP lets the AI read and edit the open vault through Obsidian on top of the filesystem. Ask which external tools or services they want Claude connected to and point them at the config.
+The brain MCP is already registered via `.mcp.json` (it needs `node` on PATH; without it the brain still works on the filesystem). Now offer the optional Obsidian live layer. Two things share the "Obsidian + Claude" name; keep them apart:
+- **(a) An MCP server that exposes the vault** (what we want): a community plugin runs an MCP server inside Obsidian, and Claude Code connects to it.
+- **(b) An agent hosted inside Obsidian**: a different setup, skipped here.
 
-Two different things share the "Obsidian + Claude" name; keep them apart:
-- **(a) An MCP server that exposes the vault** (what we want): a plugin runs an MCP server inside Obsidian, and Claude Code connects to it.
-- **(b) An agent hosted inside Obsidian** (e.g. `yishentu/claudian`, `rait-09/obsidian-agent-client`): Claude as a sidebar in the app. A different setup, skipped here.
-
-For (a):
-1. Install the community plugin **Obsidian MCP** (`aaronsb/obsidian-mcp-plugin`, listed in the catalog as "Semantic Notes Vault MCP") and enable it.
-2. In its settings tab, generate an API key. Default port is `3001`.
-3. Keep Obsidian open on this project's vault. The server runs inside the app, so a closed Obsidian means the MCP is simply absent and the AI falls back to the filesystem, which works fine.
-4. Register once from the project root: `claude mcp add --transport http obsidian http://localhost:3001/mcp --header "Authorization: Bearer <key>"`. It persists across sessions. Do not use `/ide`.
+For (a): install the **Obsidian MCP** community plugin (`aaronsb/obsidian-mcp-plugin`, listed as "Semantic Notes Vault MCP") and enable it; generate an API key in its settings tab (default port `3001`); keep Obsidian open on this vault; register once from the project root: `claude mcp add --transport http obsidian http://localhost:3001/mcp --header "Authorization: Bearer <key>"`. It persists across sessions. A closed Obsidian just means the MCP is absent and the AI falls back to the filesystem.
 
 ## Always, at the end
 
-Recap what got set up and the `next_step`. If a step needs the user (run a script, accept the plugin prompt, open Obsidian), spell it out.
+Recap what got set up and the `next_step`. If a step needs the user (run a script, accept a prompt, open Obsidian), spell it out.

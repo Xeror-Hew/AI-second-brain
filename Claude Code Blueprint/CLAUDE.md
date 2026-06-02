@@ -4,6 +4,8 @@
 
 > 📖 **Start here**: [[project_brain/plan/plan_summary]] (the AI's technical plan, overview plus pointers) and [[project_brain/next_step]] (the concrete next action).
 
+> 🧠 **Shared brain.** `Vision` and `notes/` are the user's mind; `plan/`, `roadmap/`, `code_map/`, and `next_step` are yours. Keep your reasoning written where the user can see it, and read theirs, so the two read as one.
+
 ---
 
 ## Workflow rules
@@ -21,6 +23,12 @@
 6. **Always optimize.** Shortest path, more parallel, less code. Keep abstraction to what the task needs.
 
 7. **Check before you assert.** Read the code or doc that already exists before saying how a system works or changing it. When unsure, go to the source.
+
+8. **No AI attribution on commits or PRs, in any project, ever.** No `Co-Authored-By` line, no "Generated with" footer, no AI co-author. The commit path is enforced deterministically (setup installs a `commit-msg` hook that strips such trailers, `settings.json` turns Claude Code's own attribution off, and a guard blocks `--no-verify`); commit normally and never reach for `--no-verify`/`-n`. Git can't hook a PR body, so write none yourself there.
+
+9. **Keep the cache warm.** Session cost is dominated by prompt-cache reuse. Pin model, effort, and MCP servers at the start; switching mid-session re-bills the whole context. Treat `CLAUDE.md` as frozen during a session (it's read once at start); anything that changes goes in `project_brain/`, read on demand, cache-safe. Compact only at task boundaries. Send verbose discovery to a subagent so it stays out of the main thread (keeping the prefix cached), and run cheap high-volume passes on a smaller model.
+
+10. **Push back, don't flatter.** Skip performative agreement; when something is off, say so with the technical reason. State confirmed-good and confirmed-wrong both plainly.
 
 ---
 
@@ -54,7 +62,7 @@
 
 10. **Link upkeep is the AI's job.** When you create/rename/remove a doc: update the right index (path-style wikilink plus a one-line description) and fix the links that pointed at the file. Keep the user out of manual link upkeep. _(procedure: `/fix-links`.)_
 
-11. **Hub and spoke, not a dense web.** The index (hub) points to the files (spokes); each file points back to its index. Files don't cross-link densely. The AI navigates through the hub, not through chains of links.
+11. **Hub and spoke.** The index (hub) points to the files (spokes); each file points back to its index. The AI navigates through the hub.
 
 12. **What the AI needs to read has to be real text.** It sees transclusion (`![[file]]`) and `dataview` blocks as raw syntax. Any index or table the AI uses is static text.
 
@@ -64,22 +72,42 @@
 
 ## Skills / commands
 
-> They live in `.claude/skills/`. You type `/name`; the AI also fires them on its own when the context matches (`when_to_use`). The skills carry the detailed procedure. The rules above are the short baseline, always in effect even if a skill doesn't fire.
+> They live in `.claude/skills/`. You type `/name` (a bare verb); the AI also fires them on its own when the context matches (`when_to_use`). The skills carry the detailed procedure. The rules above are the short baseline, always in effect even if a skill doesn't fire.
 
-**Rituals (you trigger, or the AI when it recognizes the moment):**
+**Brain core** (the second brain, works on any project):
 - `/setup`: onboarding. Installs the blueprint fresh, or upgrades it in place when you drop a newer version.
 - `/start`: read-only orientation. Where we stopped plus the next step.
-- `/done`: close out a finished task on the spot. Log it, prune the roadmap, update the map if the structure changed, set the next step.
+- `/done`: close out a finished task on the spot. Log it, prune the roadmap, update the map if the structure changed, set the next step, finish the branch when one is ready.
 - `/end`: safety-net sweep at session close. Map, log, roadmap, next_step, dead links, catching whatever a task close missed.
 - `/remember`: save a memory in the right format plus index it.
-- `/map`: (re)build the code map.
-- `/writeplan`: derive or update `plan/` from [[project_brain/Vision]].
+- `/writeplan`: derive `plan/` from [[project_brain/Vision]], or turn an approved spec into a bite-sized implementation plan.
+- `/brainstorm`: explore intent and design before building; write the spec into `plan/`, then hand to `/writeplan`.
 - `/debloat`: trim `project_brain/`. Cut redundancy, prune stale, fragment big files, fix links.
+
+**Code engine** (the execution discipline):
+- `/tdd`: red-green-refactor; no production code without a failing test first.
+- `/diagnose`: root-cause investigation before any fix.
+- `/critique`: request a code review (reviewer subagent) and receive one with technical rigor.
+- `/execute`: run a written plan from `plan/`, subagent-driven or inline with checkpoints.
+- `/worktree`: isolate feature work in a git worktree (native tool first).
+- `/writeskill`: author or edit a skill, tested before it ships.
+- `/map`: (re)build the code map.
 
 **Automatic (the AI fires these itself, you don't call them):**
 - `check-map`: check the map before touching unfamiliar code.
 - `check-plan`: check the technical plan before changing architecture or a settled decision.
 - `fix-links`: when you create/rename/remove a doc, fix the index plus links.
+
+---
+
+## Engine: one system
+
+The code-engine skills are the blueprint's own, vendored from [superpowers](https://github.com/obra/superpowers) (MIT, by Jesse Vincent; credit in `.claude/NOTICE.md`). There is no separate plugin to install and nothing to wire: the brain and the execution engine ship as one, and `settings.json` turns the external superpowers plugin off for this project (if it is installed globally) so the forked skills are not duplicated and the session injection is not doubled. `CLAUDE.md` outranks any skill, so trivial work skips the heavy gates. These rules settle the overlaps:
+
+- **Plan → execute**: `/brainstorm` writes a design spec into `plan/`; `/writeplan` turns it into a bite-sized task-list (or derives the project plan from `Vision`); `/execute` runs it; `/done` logs what shipped with the hash. Run `/brainstorm` on a real feature, skip it on mechanical work.
+- **Build discipline**: `/tdd` and `/diagnose` compose unchanged. `/critique` runs before the integration decision; `/done` records the result.
+- **Finish**: `/done` (per task) and `/end` (session) own both the brain upkeep and the merge/PR/keep decision. On a docs-only or test-less project, skip the test gate and make the call directly.
+- **Two groups, one seam**: brain core (orient, plan, remember, finish) works on any project; the code engine (`/tdd /diagnose /critique /execute /worktree /map /writeskill`) is the part a non-code variant would swap. Fire a skill when it fits the moment; rules 1 (≥95% then act) and 9 (keep the cache warm) hold throughout.
 
 ---
 

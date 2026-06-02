@@ -26,9 +26,23 @@ try {
     $marker = '\project_brain\'
     $idx = $lower.IndexOf($marker)
     if ($idx -lt 0) { exit 0 }
-    if (($lower -like '*\history\*') -or ($lower -like '*\memory\*') -or ($lower -like '*\roadmap\*') -or ($lower -like '*\notes\*')) { exit 0 }
 
     $devRoot = $norm.Substring(0, $idx + $marker.Length - 1)   # ...\project_brain
+
+    # history/ and memory/ are engine folders (canonical); roadmap/ and notes/ may be localized,
+    # their physical names living in project_brain/.brain.json. Resolve so the exclusion still holds.
+    $roadmapDir = 'roadmap'; $notesDir = 'notes'
+    $manifestPath = Join-Path $devRoot '.brain.json'
+    if (Test-Path -LiteralPath $manifestPath) {
+        try {
+            $names = (Get-Content -LiteralPath $manifestPath -Raw -ErrorAction Stop | ConvertFrom-Json).names
+            if ($names.roadmap) { $roadmapDir = [string]$names.roadmap }
+            if ($names.notes)   { $notesDir   = [string]$names.notes }
+        } catch {}
+    }
+    if (($lower -like '*\history\*') -or ($lower -like '*\memory\*') -or `
+        ($lower -like "*\$($roadmapDir.ToLower())\*") -or ($lower -like "*\$($notesDir.ToLower())\*")) { exit 0 }
+
     $base    = [IO.Path]::GetFileNameWithoutExtension($filePath)
     $snapDir = Join-Path (Join-Path $devRoot 'history') $base
 

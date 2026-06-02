@@ -14,9 +14,19 @@ case "$fp" in *.md) ;; *) exit 0 ;; esac            # .md only
 
 norm="${fp//\\//}"                                  # normalize separator
 case "$norm" in */project_brain/*) ;; *) exit 0 ;; esac
-case "$norm" in */history/*|*/memory/*|*/roadmap/*|*/notes/*) exit 0 ;; esac
-
 devRoot="${norm%%/project_brain/*}/project_brain"
+
+# history/ + memory/ are engine folders (canonical); roadmap/ + notes/ may be localized, their
+# physical names living in project_brain/.brain.json. Resolve so the exclusion still holds.
+roadmapDir=roadmap; notesDir=notes
+if [ -f "$devRoot/.brain.json" ]; then
+  r="$(sed -n 's/.*"roadmap"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$devRoot/.brain.json" | head -1)"
+  n="$(sed -n 's/.*"notes"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$devRoot/.brain.json" | head -1)"
+  [ -n "$r" ] && roadmapDir="$r"
+  [ -n "$n" ] && notesDir="$n"
+fi
+case "$norm" in */history/*|*/memory/*|*/"$roadmapDir"/*|*/"$notesDir"/*) exit 0 ;; esac
+
 base="$(basename "$fp")"; base="${base%.md}"
 snapDir="$devRoot/history/$base"
 

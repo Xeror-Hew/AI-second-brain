@@ -32,4 +32,5 @@
 
 ## 🔒 Commit policy
 
+- **No AI attribution, ever** (fixed for every project): no `Co-Authored-By`, no "Generated with" footer. Setup enforces it with a `commit-msg` hook plus `settings.json`. See `CLAUDE.md` rule 8.
 - {{e.g. autonomous commits when it makes logical sense; split into logical commits}}
