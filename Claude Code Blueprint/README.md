@@ -1,104 +1,74 @@
-# Claudian: a second brain for Claude Code
+# The second brain for your AI
 
-A drop-in workflow that turns Claude Code into a second brain you and the AI share. One truth, serving both: you write the vision, the AI writes the plan, the roadmap, the code map, and the next step, each where the other can read it. Two intelligences working as one.
+A second brain for software projects. Drop this folder in, run `/setup`, and Claude keeps the thinking organized: your vision, a technical plan, a roadmap, a live map of the code, and a memory that survives across sessions. You write in Obsidian or any editor; Claude reads and maintains the structure, all in plain markdown.
 
-> 🌎 Não fala inglês? Veja [README.pt-BR.md](README.pt-BR.md). The engine stays English; `/setup` localizes everything you read, plus the folder and file names, into your language.
+## Install
 
-It is a **folder**, not a plugin: skills you fire as bare `/verbs`, snapshot hooks, a no-AI-attribution commit guard, a zero-dependency **brain MCP**, and a forked-in execution engine. Drop the folder into any project, run one command, and the brain is live.
+1. Drop the `Claude Code Blueprint/` folder into your project.
+2. Run `/setup` from that project.
 
----
+`/setup` moves `CLAUDE.md`, `.claude/`, `project_brain/`, and `.mcp.json` to your project root, then wires the memory link, and the `.gitignore`. It asks your language, maps the code you already have, and folds in any notes lying around. Run `/reload-skills` (Claude Code 2.1.152+) or reopen the session so the commands load.
 
-## 🚀 Install
+(The brain MCP needs `node` on PATH. Without it the brain still works over the filesystem, you just lose the typed-tool shortcut.)
 
-1. Download this repo (or a release) and drop the `Claude Code Blueprint/` folder into your project.
-2. From that project, run:
+## Update
 
-```
-/setup
-```
+Drop the newer folder in and run `/setup` again. It sees the existing install, checks the version, swaps in the new engine, and merges rule changes into your `CLAUDE.md`. Your `project_brain/`, your memory, and the tweaks you made stay put.
 
-`/setup` moves `CLAUDE.md`, `.claude/`, `project_brain/`, and `.mcp.json` to your project root, wires the memory link plus the commit-msg hook plus `.gitignore`, asks your language, maps your code, and folds in any notes you already have. Run `/reload-skills` (Claude Code 2.1.152+) or reopen the session so the bare `/verbs` load.
+## How it works
 
-> The brain MCP needs `node` on PATH. Without it the brain still works (Claude reads `project_brain/` directly); you only lose the typed-tool shortcut.
+You write `Vision` and `notes/`; Claude writes `plan/`, `roadmap/`, `code_map/`, and `next_step`. Each side reads the other's.
 
-**Update later:** drop the newer folder in and run `/setup` again. It reconciles the customizations you made instead of overwriting them.
+Two ideas carry it:
 
----
+1. **Index plus description.** Every folder has an index pointing to its files, one line each. Claude reads the index and opens only the file it needs, so it never reloads the whole brain every session (that's what rots context). You navigate the same way.
+2. **Automatic history.** Before a living doc changes, a hook freezes the old version into `history/`. Claude never reads it; it's your undo.
 
-## 🧠 Mental model
+Three layers, each optional on top of the last:
 
-`Vision` and `notes/` are your mind; `plan/`, `roadmap/`, `code_map/`, and `next_step` are the AI's. Each writes where the other can read.
+- **Filesystem** (always on): plain `.md` with frontmatter and `[[wikilinks]]`. No server.
+- **Brain MCP** (`.mcp.json`): a typed index over `project_brain/`, so Claude pulls one section or appends a line instead of reading whole files. Works in the terminal and in an Obsidian sidebar that runs the CLI.
+- **Obsidian MCP** (optional): graph and Bases access while Obsidian is open. It goes away when you close Obsidian.
 
-Two principles carry it:
+## Commands
 
-1. **Index plus description.** Each folder has an index that points to its files with one description line. The AI reads the index, then opens only the one doc it needs (it does not read the whole brain each session, the way a context-rot-prone "read everything" memory bank does). You navigate the same way.
-2. **Track the changes.** A hook freezes the "before" of every edit into `history/`. The AI never reads it; it is your safety net.
+You type `/name`; Claude also fires them on its own when the moment fits.
 
-Rituals are **skills**: short commands you type (`/done`, `/end`) that the AI also fires on its own when the moment fits.
-
-### Three layers, progressive enhancement
-
-- **Layer 0, filesystem (always on).** The brain is plaintext `.md` plus YAML frontmatter plus `[[wikilinks]]`. Works headless, no setup, no server.
-- **Layer 1, the brain MCP (registered via `.mcp.json`).** A typed index over `project_brain/`: `brain_orient` (where work stopped, in one call), `brain_search`, `brain_get`, `brain_append`, `brain_set_next`, `brain_log_done`. Retrieval instead of reading whole files; markdown stays the source of truth. It runs in the terminal and inside Claudian (the Obsidian sidebar that wraps the Claude Code CLI).
-- **Layer 2, Obsidian MCP (optional, live only).** For sessions where Obsidian is open and you want graph and Bases access. An enhancement, never a dependency (it dies when Obsidian closes).
-
----
-
-## 🛠️ Skills
-
-You type `/name` (a bare verb); the AI also fires them when the context matches.
-
-**Brain core** (the second brain, works on any project):
+**Brain core** (works on any project):
 
 | Command | What it does |
 |---------|--------------|
-| `/setup` | Scaffold or reconcile the brain in a project. |
-| `/start` | Read-only orientation: where we stopped plus the next step (`brain_orient`). |
-| `/done` | Close a finished task: log, prune the roadmap, set the next step, finish the branch when one is ready. |
-| `/end` | Session-close safety-net sweep, catching what a task close missed. |
-| `/remember` | Save a persistent memory in the right format plus index it. |
-| `/writeplan` | Derive `plan/` from your `Vision.md`, or turn an approved spec into a bite-sized plan. |
+| `/setup` | Install or update the brain in a project. |
+| `/start` | Read-only orientation: where we stopped and the next step. |
+| `/done` | Close a finished task: log it, prune the roadmap, set the next step, finish the branch if one's ready. |
+| `/end` | Session-close sweep that catches whatever the task closes missed. |
+| `/remember` | Save a memory in the right format and index it. |
+| `/writeplan` | Turn your `Vision` into a technical plan, or a spec into a bite-sized one. |
 | `/brainstorm` | Explore intent and design before building; write the spec into `plan/`. |
 | `/debloat` | Trim `project_brain/`: cut redundancy, prune stale, fix links. |
 
-**Code engine** (forked from superpowers):
+**Code engine**:
 
 | Command | What it does |
 |---------|--------------|
 | `/tdd` | Red-green-refactor; no production code without a failing test first. |
 | `/diagnose` | Root-cause investigation before any fix. |
-| `/critique` | Request a review (reviewer subagent) and receive one with technical rigor. |
-| `/execute` | Run a plan from `plan/`, subagent-driven or inline with checkpoints. |
+| `/critique` | Dispatch a reviewer for your work, and take feedback with technical rigor. |
+| `/execute` | Run a plan from `plan/`, by subagents or inline with checkpoints. |
 | `/worktree` | Isolate feature work in a git worktree. |
-| `/writeskill` | Author or edit a skill, tested before it ships. |
+| `/writeskill` | Write or edit a skill, tested before it ships. |
 | `/map` | (Re)build the code map. |
 
-Automatic (the AI fires them): `check-map`, `check-plan`, `fix-links`.
+`check-map`, `check-plan`, and `fix-links` fire on their own. Two subagents sit in `.claude/agents/`: `brain-researcher` (read-only, cheap, for discovery that stays off the main thread) and `doc-scribe` (heavier doc upkeep).
 
-Plus two cheap workers in `.claude/agents/`: `brain-researcher` (read-only, haiku, for discovery that stays off the main thread) and `doc-scribe` (heavier doc upkeep).
+## The engine
 
----
+The code-engine commands are forked from [superpowers](https://github.com/obra/superpowers) (MIT, by Jesse Vincent), trimmed and renamed, with their output pointed at `project_brain/`. Nothing extra to install: the brain and the engine are one folder, and `CLAUDE.md` outranks any skill, so trivial work skips the gates. If you already run the superpowers plugin, the blueprint turns it off for this project alone (the engine is already here); your other projects keep it. Credit is in `.claude/NOTICE.md`.
 
-## 🦸 The engine, forked in
+## Git: no AI attribution
 
-The code-engine skills are vendored from [superpowers](https://github.com/obra/superpowers) (MIT, by Jesse Vincent), then trimmed, renamed to bare verbs, and fused with the brain so their output lands in `project_brain/`. There is no separate plugin to install and nothing to wire: the brain and the engine ship as one folder, and `CLAUDE.md` outranks any skill so trivial work skips the heavy gates. TDD, debugging, brainstorming, the plan/execute pipeline, code review, and worktrees compose unchanged; `/writeplan` and `/done` own the project plan and the roadmap. Credit lives in `.claude/NOTICE.md`. If you have the external superpowers plugin installed globally, the blueprint disables it for this project alone via `settings.json` (the engine is already here, so it would only duplicate the skills); your other projects keep it.
+No commit or PR carries a `Co-Authored-By` or a "Generated with" line, in any project. `/setup` installs a `commit-msg` hook that strips those trailers (it chains an existing hook, handles husky and `core.hooksPath`), turns Claude Code's own attribution off in `settings.json`, and a guard blocks the `--no-verify` escape. Git can't reach a PR body, so `CLAUDE.md` carries the rule there.
 
----
+## Make it yours
 
-## 🔒 Git: no AI attribution, ever
-
-Commits and PRs carry no `Co-Authored-By` and no "Generated with" footer, in any project. `/setup` installs a `commit-msg` hook that strips such trailers (it chains an existing hook, integrates with husky, respects `core.hooksPath`), `settings.json` turns Claude Code's own attribution off, and a `guard-commit` hook blocks the common `--no-verify`/`-n` skips. The commit-msg hook plus that setting are the real guarantee; the guard is defense-in-depth. Git cannot hook a PR body, so `CLAUDE.md` carries the rule for the AI to follow there.
-
----
-
-## ⚡ Why it pays for itself
-
-A second brain earns back its tokens. Without one, every session re-derives context by re-reading and re-exploring the repo; with one, `brain_orient` rebuilds context from a small index plus a few targeted docs, the way retrieval beats replay.
-
-This is not hand-waving. Anthropic's own context-engineering guidance recommends exactly this shape (just-in-time retrieval via lightweight identifiers, subagents that return distilled summaries, progressive disclosure via metadata). Their memory plus context-editing evals show up to **84% fewer tokens** on long agentic runs. Prompt caching bills cached reads at a fraction of base input, and Claudian keeps the cache warm: `CLAUDE.md` stays frozen in the cached prefix, everything that changes lives in `project_brain/` (read on demand, appended not mutated), and the tool surface stays small and stable. The brain MCP leans on deferred tool-loading: `brain_orient` is always loaded so orientation is one call, the other five load on demand. Measured always-on cost is about 1.2k tokens per session. The win grows with the project.
-
----
-
-## 🎨 Make it yours
-
-Claudian adapts to any project and bends to you. Project-level personality lives in `CLAUDE.md` (rules) and `project_brain/context.md` (stack, principles, project rules); edit them freely. The brain stays local to your machine by default (gitignored), so it is personal; to share the plan and roadmap with a team, commit the brain spine (the setup script's comment shows the one-line change). The engine lives in your project's `.claude/` (skills, hooks, the brain MCP), so it is yours to edit outright. Update by dropping a newer folder and re-running `/setup`, which reconciles what you changed.
+Rules live in `CLAUDE.md`; stack and project specifics live in `project_brain/context.md`. Edit both freely. The brain stays local by default (gitignored), so it's personal; to share the plan and roadmap with a team, commit the brain spine (the setup script comments show the one-line change). The engine sits in your `.claude/`, yours to edit.
