@@ -4,7 +4,7 @@ Um segundo cérebro pra projetos de software. Joga essa pasta no projeto, aponta
 
 ## Instalar
 
-1. Joga a pasta `Claude Code Blueprint/` dentro do teu projeto.
+1. Joga a pasta `Claude Code Blueprint/` dentro do seu projeto.
 2. Abre o Claude nesse projeto (terminal, Claudian ou Cowork).
 3. Fala pro Claude, colando esta linha:
    > read and follow `Claude Blueprint`
