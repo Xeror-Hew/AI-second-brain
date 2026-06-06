@@ -11,7 +11,6 @@ Um segundo cérebro pra projetos de software. Joga essa pasta no projeto, aponta
 
 O Claude lê esse arquivo local e roda a instalação: pergunta teu idioma e coloca `CLAUDE.md`, `.claude/`, `project_brain/` e `.mcp.json` na raiz do projeto, **fundindo, sem sobrescrever**. Teu `CLAUDE.md` e teu `.claude/settings.json` ficam; as regras dele somam junto das tuas; numa instalação que já existe, tuas customizações são reconciliadas, não apagadas. Faz a fiação do link da memória e do `.gitignore`, mapeia teu código, e absorve as notas espalhadas. Quando terminar, roda `/reload-skills` (Claude Code 2.1.152+) ou reabre pra carregar os `/verbs`.
 
-> **Por que um caminho de arquivo, não `/setup` nem "instale a blueprint".** Uma skill dentro de uma subpasta recém-arrastada só é registrada quando os arquivos dela chegam na raiz, então `/setup` não existe na primeira vez. E um "instale a blueprint" genérico pode acionar outra skill instalada que vai buscar num registry online. Nomear o arquivo local é inequívoco: o Claude lê e roda a instalação, igual no terminal, no Claudian e no Cowork. Depois da primeira instalação tudo fica na raiz e `/setup` passa a funcionar pra sempre, inclusive pra atualizar.
 
 (O brain MCP precisa de `node` no PATH. Sem ele o cérebro funciona pelo filesystem mesmo, você só perde o atalho das ferramentas tipadas.)
 

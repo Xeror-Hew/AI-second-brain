@@ -16,7 +16,7 @@ All three read the same `CLAUDE.md` and the same brain. It's plain text, so it w
 
 ## Install
 
-1. **Install [Node.js](https://nodejs.org)** if you don't have it (free, one click). Claude uses it to run your brain; without it the brain still reads as plain files, but the automatic parts (like saved history) won't run.
+1. **Install [Node.js](https://nodejs.org)** if you don't have it. Claude uses it to run your brain; without it the brain still reads as plain files, but the automatic parts (like saved history) won't run.
 2. For the **Claude Code** and **Claudian** paths, also install **[Claude Code](https://claude.com/claude-code)**. For **Cowork**, you just need the Claude desktop app.
 3. Drop the `Claude Cowork Blueprint/` folder into your project (a new folder, or an existing Obsidian vault).
 4. Open Claude with that folder:
@@ -25,8 +25,6 @@ All three read the same `CLAUDE.md` and the same brain. It's plain text, so it w
    > read and follow `Claude Blueprint`
 
    It reads that local file and runs setup: asks your language, puts everything in place, links the memory, and folds in any notes you already have. It **merges, never overwrites** your `CLAUDE.md` or settings; on an existing install your customizations are reconciled, not wiped. On Claude Code and Claudian, when it's done, run `/reload-skills` (2.1.152+) or reopen so the `/verbs` load.
-
-> **Why a file path, not `/setup` or "set this up".** A freshly dropped skill isn't registered yet, so `/setup` doesn't exist on the first run; and a vague "install the blueprint" can send another installed skill off to an online registry. Naming the local file is unambiguous and works on every surface. After install, the `/verbs` are there on Claude Code and Claudian, including for updates.
 
 ## Your first session
 
@@ -68,8 +66,6 @@ You don't have to memorize anything: just talk to Claude in plain words, and it 
 | Wrap up a finished task | `/done` |
 
 **Now and then:** run a plan task by task · figure out why something isn't working · sort and organize incoming material · map your workspace · index your finished work · clean up the brain · back up the brain · wrap up a session · add your own command.
-
-On Claude Code and Claudian you can also type the `/command` directly (the menu commands above, plus `/execute`, `/diagnose`, `/triage`, `/work-map`, `/library`, `/tidy`, `/snapshot`, `/end`, `/writeskill`). On Cowork, just describe what you want in plain words; the slash shortcuts may not be wired there yet.
 
 ## What's already set up
 

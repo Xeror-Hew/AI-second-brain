@@ -24,8 +24,8 @@ The work runs through skills: short commands you type (`/start`, `/done`, `/writ
 
 ## Variants
 
-- **`Claude Code Blueprint/`** (ready): for software projects. Plan, roadmap, code map, memory.
-- **`Claude Cowork Blueprint/`** (coming soon): a lighter take for non-code work, derived from the Code one once it is solid.
+- **`Claude Code Blueprint/`** for software projects. Plan, roadmap, code map, memory.
+- **`Claude Cowork Blueprint/`** a lighter take for non-code work.
 
 ## Before you install
 
@@ -36,10 +36,10 @@ You will be setting up a few things, so you know what you are getting into:
 
 ## Get started
 
-Open **`Claude Code Blueprint/`** and follow its specific README. It walks you through the install step by step. You can also ask your own Claude for help when installing.
+Open **`Claude xxxx Blueprint/`** and follow its specific README. It walks you through the install step by step. You can also ask your own Claude for help when installing.
 
-On install, `/setup` asks which language you want and translates the parts you read and edit, so you can run the whole thing in your own language. It is meant to be customized to your needs and your style, so play with it freely.
+On install, the setup asks which language you want and translates the parts you read and edit, so you can run the whole thing in your own language. It is meant to be customized to your needs and your style, so play with it freely.
 
 ## Updating
 
-Same move as installing. Grab the latest `Claude Code Blueprint/` folder, drop it in your project root, and run `/setup` again. It notices the blueprint is already there, checks the version, and upgrades in place: it swaps in the new engine (skills, hooks, setup) and merges any rule changes into your CLAUDE.md, while leaving your project_brain and your memory alone.
+Same move as installing. Grab the latest `Claude Code Blueprint/` folder, drop it in your project root, and run `/setup`. It notices the blueprint is already there, checks the version, and upgrades in place: it swaps in the new engine (skills, hooks, setup) and merges any rule changes into your CLAUDE.md, while leaving your project_brain and your memory alone.
