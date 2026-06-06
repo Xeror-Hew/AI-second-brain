@@ -1,19 +1,23 @@
 # The second brain for your AI
 
-A second brain for software projects. Drop this folder in, run `/setup`, and Claude keeps the thinking organized: your vision, a technical plan, a roadmap, a live map of the code, and a memory that survives across sessions. You write in Obsidian or any editor; Claude reads and maintains the structure, all in plain markdown.
+A second brain for software projects. Drop this folder in, point Claude at the setup file, and Claude keeps the thinking organized: your vision, a technical plan, a roadmap, a live map of the code, and a memory that survives across sessions. You write in Obsidian or any editor; Claude reads and maintains the structure, all in plain markdown.
 
 ## Install
 
 1. Drop the `Claude Code Blueprint/` folder into your project.
-2. Run `/setup` from that project.
+2. Open Claude in that project (terminal, Claudian, or Cowork).
+3. Tell Claude, pasting this line:
+   > read and follow `Claude Blueprint`
 
-`/setup` moves `CLAUDE.md`, `.claude/`, `project_brain/`, and `.mcp.json` to your project root, then wires the memory link, and the `.gitignore`. It asks your language, maps the code you already have, and folds in any notes lying around. Run `/reload-skills` (Claude Code 2.1.152+) or reopen the session so the commands load.
+Claude reads that local file and runs the install: it asks your language and places `CLAUDE.md`, `.claude/`, `project_brain/`, and `.mcp.json` at your project root, **merging, never overwriting**. Your `CLAUDE.md` and `.claude/settings.json` stay; its rules fold in alongside yours; on an existing install your customizations are reconciled, not wiped. It wires the memory link and `.gitignore`, maps your code, and folds in any notes lying around. When it's done, run `/reload-skills` (Claude Code 2.1.152+) or reopen so the `/verbs` load.
+
+> **Why a file path, not `/setup` or "install the blueprint".** A skill inside a freshly dropped subfolder isn't registered until its files reach the project root, so `/setup` doesn't exist on the first run. And a vague "install the blueprint" can trip another installed skill into searching an online registry. Naming the local file is unambiguous: Claude reads it and runs the install, the same in the terminal, in Claudian, and in Cowork. After the first install everything sits at the root and `/setup` works for good, including updates.
 
 (The brain MCP needs `node` on PATH. Without it the brain still works over the filesystem, you just lose the typed-tool shortcut.)
 
 ## Update
 
-Drop the newer folder in and run `/setup` again. It sees the existing install, checks the version, swaps in the new engine, and merges rule changes into your `CLAUDE.md`. Your `project_brain/`, your memory, and the tweaks you made stay put.
+Drop the newer folder in and run `/setup` (it's installed at the root now, so the command exists). It checks the version, swaps in the new engine, and merges rule changes into your `CLAUDE.md`. Your `project_brain/`, your memory, and the tweaks you made stay put.
 
 ## How it works
 

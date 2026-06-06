@@ -1,0 +1,7 @@
+# Hook scripts must stay LF so the bash branches parse on Unix.
+# run-hook.cmd is a cmd+bash polyglot: it needs LF for the bash side and tolerates LF under cmd.exe.
+* text=auto
+*.sh text eol=lf
+*.mjs text eol=lf
+hooks/run-hook.cmd text eol=lf
+*.ps1 text eol=crlf

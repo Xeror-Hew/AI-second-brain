@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "language": "en",
+  "_comment": "Localization manifest. The engine speaks the canonical (English) keys; the user sees the values. /setup rewrites the values when it localizes. project_brain, history, and memory stay canonical and are not listed here. Renaming a value here without renaming the matching folder/file on disk will break resolution.",
+  "names": {
+    "Vision": "Vision",
+    "context": "context",
+    "next_step": "next_step",
+    "plan": "plan",
+    "roadmap": "roadmap",
+    "work_map": "work_map",
+    "library": "library",
+    "notes": "notes"
+  },
+  "sections": {
+    "BLOCKERS": "BLOCKERS",
+    "CURRENT FRONT": "CURRENT FRONT"
+  }
+}

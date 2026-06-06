@@ -6,13 +6,21 @@ when_to_use: when dropping this blueprint into a project (new or existing), or u
 
 You just got dropped into a project with this blueprint. Orchestrate the install. **Preserve the user's content**: never rename or delete what is theirs, and confirm before moving anything you did not create.
 
+> **How you got here.** On a first install the `/setup` skill is not registered yet: it sits inside the dropped subfolder, and Claude Code only registers a subfolder's skills after the files reach the project root. So the user installs by pointing you at the dropped folder ("read and follow `Claude Blueprint`"), and you find and read this file directly. That is expected, and it is deliberately "read and follow <folder>", not "install the blueprint": a vague install phrase can be grabbed by another installed skill (e.g. a skill-registry search) instead. Run §0 to get the files to the root; from then on the slash commands exist.
+
 ## 0. Place the files
 
 The installed footprint is `CLAUDE.md`, `.claude/`, `project_brain/`, and `.mcp.json` at the project root. They may be:
 - **Already at the root**: go ahead.
 - **Inside the folder the user dropped** (e.g. `Claude Code Blueprint/`): that is the source. Move those four to the root. `README.md` and `README.pt-BR.md` are install docs, not part of the project; leave them in the dropped folder and delete the whole folder at the end. Never copy a README over one the user already has.
 
-If the project already has its own `.claude/settings.json` or `CLAUDE.md`, merge rather than overwrite: keep the project's keys and rules, add the blueprint's `hooks`, `includeCoAuthoredBy: false`, the empty `attribution`, and the `enabledPlugins` entry that turns the external `superpowers` plugin off for this project (the engine is forked in, so the plugin would only duplicate skills and double the session injection; it stays on in the user's other projects). The no-AI-attribution policy is fixed: keep it on even if the project had it off.
+**Merge, never overwrite, when the root already has a file.** This blueprint installs into existing projects, so assume the user already has work at the root and protect it:
+- **`CLAUDE.md`**: if the root has one, it is the user's and it stays. Do not replace it. Keep all of their content, then fold the blueprint's sections in around it (the intro callouts, `Workflow rules`, `Doc rules`, `Skills / commands`, `Engine`, `Project context`, `Navigation`), and fill the `{{PLACEHOLDERS}}` from what you learn (ask for what you cannot infer). Their project-specific rules win on any conflict; move purely project-specific config into `project_brain/context.md`. If the root has no `CLAUDE.md`, the blueprint's becomes it.
+- **`.claude/settings.json`**: merge keys. Keep the project's `permissions`/`env`/custom hooks, add the blueprint's `hooks`, `includeCoAuthoredBy: false`, the empty `attribution`, and the `enabledPlugins` entry that turns the external `superpowers` plugin off for this project (the engine is forked in, so the plugin would only duplicate skills and double the session injection; it stays on in the user's other projects). The no-AI-attribution policy is fixed: keep it on even if the project had it off.
+- **`.claude/` subtrees** (`skills/`, `hooks/`, `mcp/`, `agents/`): additive. Drop the blueprint's in alongside whatever is there (an empty `.claude/skills/` from another tool is fine; nothing of the user's gets removed).
+- **`project_brain/`**: if the root already has one, this is an upgrade, go to §3. The dropped `project_brain/` is an empty template, never copy it over content.
+
+Two more items ship in the dropped folder; bring them along with the same merge-never-overwrite rule. **`.obsidian/`** is a vault config tuned for the brain: move it to the root only if the root has none; if the project is already an Obsidian vault, keep the user's `.obsidian/` and leave it. It is optional, the brain works as plain markdown without it. **`.gitattributes`**: if the root has one, append the blueprint's lines to it, otherwise move it.
 
 Then have the user run `/reload-skills` (Claude Code 2.1.152+) or reopen the session so the bare `/verbs` load.
 
